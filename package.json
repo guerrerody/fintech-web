@@ -1,14 +1,28 @@
 {
   "name": "fintech-web",
+  "description": "Fintech Finanzas",
+  "homepage": "https://fintech.com/",
+  "author": "Sistemas - Grupo 1",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
+  "copyright": "Copyright 2023 Fintech",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.14.7",
+    "@mui/material": "^5.14.7",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-router-dom": "^6.15.0",
     "react-scripts": "5.0.1",
+    "sass": "^1.66.1",
     "web-vitals": "^2.1.4",
     "workbox-background-sync": "^6.6.0",
     "workbox-broadcast-update": "^6.6.0",
@@ -22,6 +36,9 @@
     "workbox-routing": "^6.6.0",
     "workbox-strategies": "^6.6.0",
     "workbox-streams": "^6.6.0"
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
   },
   "scripts": {
     "start": "react-scripts start",

@@ -1,0 +1,22 @@
+$light-bg: #f5f5f5;
+$dark-bg: #212121;
+
+.auth-image-grid {
+  background-image: url('/assets/images/banner2.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+
+  &.light-mode {
+    background-color: $light-bg;
+  }
+
+  &.dark-mode {
+    background-color: $dark-bg;
+  }
+}
+
+.auth-content-card {
+  margin: 70px 5% 5% 5%;
+  background-color: rgba(255, 255, 255, 0.8) !important;
+}

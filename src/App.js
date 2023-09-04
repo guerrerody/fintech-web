@@ -1,26 +1,30 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
 
-function App() {
+import React from 'react';
+
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+
+import theme from "./theme";
+import './App.scss';
+import Signin from 'components/auth/Signin/Signin';
+import Signup from 'components/auth/Signup/Signup';
+import ForgotPassword from 'components/auth/ForgotPassword/ForgotPassword';
+
+export default function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Routes>
+          <Route path="/signin" element={<Signin />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          {/* <Route path="/404" component={ErrorPage} />
+          <Route path="*" component={ErrorPage} /> */}
+          <Route path="/" element={<Navigate to="/signin" replace />} />
+        </Routes>
+      </ThemeProvider>
+    </Router>
   );
 }
-
-export default App;
