@@ -20,8 +20,10 @@ export default function App() {
           <Route path="/signin" element={<Signin />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
-          {/* <Route path="/404" component={ErrorPage} />
-          <Route path="*" component={ErrorPage} /> */}
+          {/*
+          <Route path="/404" element={<ErrorPage />} />
+          <Route path="*" element={<ErrorPage />} />
+          */}
           <Route path="/" element={<Navigate to="/signin" replace />} />
         </Routes>
       </ThemeProvider>
