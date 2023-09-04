@@ -18,7 +18,7 @@ const AuthLayout = ({ title, children }) => {
         <Box sx={{ position: 'absolute', top: '2%', left: '2%' }}>
           <img src={logo} alt="Logo" style={{ width: 150 }}/>
         </Box>
-        <Grid item xs={12} sm={8} md={6} lg={4}>
+        <Grid item xs={12} sm={12} md={6} lg={5}>
           <Card className="auth-content-card">
             {title && <CardHeader title={title}/>}
             <CardContent>
