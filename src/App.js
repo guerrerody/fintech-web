@@ -10,6 +10,8 @@ import './App.scss';
 import Signin from 'components/auth/Signin/Signin';
 import Signup from 'components/auth/Signup/Signup';
 import ForgotPassword from 'components/auth/ForgotPassword/ForgotPassword';
+import GastosHistorial from 'components/pages/gastos/GastosHistorial';
+import GastosRegistro from 'components/pages/gastos/registro/GastosRegistro';
 
 export default function App() {
   return (
@@ -20,6 +22,11 @@ export default function App() {
           <Route path="/signin" element={<Signin />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
+
+          {/* GASTOS */}
+          <Route path="/gastos-historial" element={<GastosHistorial />} />
+          <Route path="/gastos-registro" element={<GastosRegistro />} />
+
           {/*
           <Route path="/404" element={<ErrorPage />} />
           <Route path="*" element={<ErrorPage />} />

@@ -1,3 +1,4 @@
+import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
@@ -8,7 +9,9 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import Swal from 'sweetalert2';
 
 import AuthLayout from 'components/layouts/AuthLayout/AuthLayout';
 import Copyright from 'components/Copyright';
@@ -17,13 +20,78 @@ import './Signin.scss';
 
 const Signin = () => {
 
-  const handleSubmit = (event) => {
+  const navigate = useNavigate();
+
+  const setLocalStorage = value => {
+    try{
+      window.localStorage.setItem("token-e", value);
+    } catch(error){
+      console.error(error);
+    }
+  }
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
+    const datos = new FormData(event.currentTarget);
+
+    let resp;
+
+    await axios.post('http://localhost:8080/api/auth/login', {
+      identificador: datos.get('email'),
+      contrasenna: datos.get('password')
+    }).then(respuesta => resp = respuesta).catch(function (error) {
+
+      if (error.response) {
+        // La respuesta fue hecha y el servidor respondió con un código de estado
+        // que esta fuera del rango de 2xx
+
+        Swal.fire({
+          icon: 'error',
+          title: 'CREDENCIALES INCORRECTAS',
+          text: error.response.data.msg
+        });
+
+        //console.log(error.response.data);
+        console.log(error.response.status);
+        //console.log(error.response.headers);
+      } else if (error.request) {
+        // La petición fue hecha pero no se recibió respuesta
+        // `error.request` es una instancia de XMLHttpRequest en el navegador y una instancia de
+        // http.ClientRequest en node.js
+
+        Swal.fire({
+          icon: 'error',
+          title: 'Error con el servidor',
+          text: "Error al intentar comunicarse con el servidor. Revise su consola para mas informacion."
+        })
+
+        console.log(error.request);
+      } else {
+        // Algo paso al preparar la petición que lanzo un Error
+
+        Swal.fire({
+          icon: 'error',
+          title: 'Error interno',
+          text: 'Ocurrio un error al intentar enviar la peticion al servidor.'
+        })
+
+        //console.log('Error', error.message);
+      }
+      //console.log(error.config);
     });
+
+    if(resp != null && resp.data.usuario.idusuario > 0){
+      setLocalStorage(resp.data.token);
+
+      Swal.fire(
+        'Good job!',
+        'Inicio de sesion correcto!',
+        'success'
+      );
+
+      navigate("/gastos-historial");
+    }
+
   };
 
   return (
@@ -36,10 +104,10 @@ const Signin = () => {
       </Box>
       <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
         <TextField margin="normal" required fullWidth autoFocus id="email" name="email"
-          label="Usuario o correo electrónico" autoComplete="email"/>
+          label="Usuario o correo electrónico" autoComplete="email" />
         <TextField margin="normal" required fullWidth id="password" name="password"
-          label="Contraseña" type="password" autoComplete="current-password"/>
-        <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="Recuérdame"/>
+          label="Contraseña" type="password" autoComplete="current-password" />
+        <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="Recuérdame" />
         <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
           Iniciar Sesión
         </Button>
