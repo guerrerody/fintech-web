@@ -8,11 +8,11 @@ import { Box, Button, TextField } from "@mui/material";
 import Swal from "sweetalert2";
 
 
-const GastosRegistro = () => {
+const IngresosRegistro = () => {
 
   const navigate = useNavigate();
 
-  const [categoria_gastos, setCategoria_gastos] = useState([]);
+  const [categoria_ingresos, setCategoria_ingresos] = useState([]);
   const [metodos_pago, setMetodos_pago] = useState([]);
   const [modalidad, setModalidad] = useState([]);
   const [impuesto, setImpuesto] = useState([]);
@@ -38,7 +38,7 @@ const GastosRegistro = () => {
       }
     })
       .then(function (arreglo) {
-        setCategoria_gastos(arreglo.data.nombresCatGas.map(catGas => <option value={catGas[1]}>{catGas[0]}</option>));
+        setCategoria_ingresos(arreglo.data.nombresCatIng.map(catIng => <option value={catIng[1]}>{catIng[0]}</option>));
         setMetodos_pago(arreglo.data.nombresMetPag.map(metPag => <option value={metPag[1]}>{metPag[0]}</option>));
         setModalidad(arreglo.data.nombresModPag.map(modPag => <option value={modPag[1]}>{modPag[0]}</option>));
         setImpuesto(arreglo.data.nombresImp.map(imp => <option value={imp[1]}>{imp[0]}</option>));
@@ -51,12 +51,12 @@ const GastosRegistro = () => {
 
     const datos = new FormData(event.currentTarget);
 
-    await axios.post('http://localhost:8080/api/gasto', {
+    await axios.post('http://localhost:8080/api/ingreso', {
       fecha: datos.get('fecha'),
       nombre: datos.get('nombre'),
       descripcion: datos.get('descripcion'),
       monto: datos.get('monto'),
-      categoria_gasto_id: datos.get('categoria_gasto'),
+      categoria_ingreso_id: datos.get('categoria_ingreso'),
       modalidad_pago_id: datos.get('modalidad_pago'),
       metodo_pago_id: datos.get('metodo_pago'),
       impuesto_id: datos.get('impuesto')
@@ -67,11 +67,11 @@ const GastosRegistro = () => {
     }).then(function (respuesta) {
       Swal.fire({
         icon: 'success',
-        title: 'GASTO CREADO',
-        text: 'Gasto creado correctamente!'
+        title: 'INGRESO CREADO',
+        text: 'Ingreso creado correctamente!'
       });
 
-      navigate('/gastos-historial');
+      navigate('/ingresos-historial');
     }).catch(function (error) {
 
       const errores = error.response.data.errors.map(errores => '\n\n' + errores.msg);
@@ -93,13 +93,13 @@ const GastosRegistro = () => {
           <h4>Menu bar    .</h4>
           <h4>Logo</h4>
         </div>
-        <h1 style={{ color: '#FF570C', fontWeight: 'bold' }}>GASTOS</h1>
+        <h1 style={{ color: '#FF570C', fontWeight: 'bold' }}>INGRESOS</h1>
       </div>
 
       <div className="center">
         <div>
           <button className="boton focus__button">REGISTRO</button>
-          <button className="boton" onClick={() => { navigate('/gastos-historial') }}>HISTORIAL</button>
+          <button className="boton" onClick={() => { navigate('/ingresos-historial') }}>HISTORIAL</button>
         </div>
       </div>
       {/* onSubmit={handleSubmit} */}
@@ -110,10 +110,10 @@ const GastosRegistro = () => {
               <TextField margin="normal" required fullWidth autoFocus id="nombre" name="nombre"
                 label="Nombre" autoComplete="nombre" />
               <div>
-                <label>CATEGORIA GASTO</label>
-                <select className="browser-default" defaultValue={999} id="categoria_gasto" name="categoria_gasto">
+                <label>CATEGORIA INGRESO</label>
+                <select className="browser-default" defaultValue={999} id="categoria_ingreso" name="categoria_ingreso">
                   <option value="999" disabled selected>-- SELECCIONE --</option>
-                  {categoria_gastos}
+                  {categoria_ingresos}
                 </select>
               </div>
               <div>
@@ -162,4 +162,4 @@ const GastosRegistro = () => {
   )
 }
 
-export default GastosRegistro;
+export default IngresosRegistro;

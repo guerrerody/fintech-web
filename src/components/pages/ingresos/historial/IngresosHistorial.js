@@ -1,4 +1,4 @@
-import "./GastosHistorial.scss";
+import "./IngresosHistorial.scss";
 import "materialize-css/dist/css/materialize.min.css";
 
 import axios from "axios";
@@ -9,20 +9,20 @@ import { getJWT } from "components/utils/localStorage";
 import Footer from "components/shared/footer";
 
 
-const GastosHistorial = () => {
+const IngresosHistorial = () => {
   const navigate = useNavigate();
 
   const [desde, setDesde] = useState(1);
   const [total, setTotal] = useState(0);
 
-  const [gastos, setGastos] = useState([]);
+  const [ingresos, setIngresos] = useState([]);
 
   const [lista, setLista] = useState([]);
   const [botones, setBotones] = useState([]);
 
   useEffect(() => {
-    getGastos();
-  }, [gastos]);
+    getIngresos();
+  }, [ingresos]);
 
   const atras = () => {
     if(desde > 1){
@@ -40,8 +40,8 @@ const GastosHistorial = () => {
     setDesde((numero - 1) * 5 + 1);
   }
 
-  const getGastos = async () => {
-    await axios.get('http://localhost:8080/api/gasto', {
+  const getIngresos = async () => {
+    await axios.get('http://localhost:8080/api/ingreso', {
       params: {
         desde: desde
       },
@@ -49,23 +49,26 @@ const GastosHistorial = () => {
         'token-e': getJWT()
       }
     }).then(respuesta => {
-      setGastos(respuesta.data.filas);
+      setIngresos(respuesta.data.filas);
       setTotal(respuesta.data.total);
       const array = [];
-        for(let i = 1; i <= (total / 5); i++){
+        for(let i = 1; i <= (total / 5 + 0.9); i++){
           array.push(<button key={i} className="col s1" onClick={() => { paginacion(i) }}>{i}</button>);
         }
 
         setBotones(array);
-      setLista(gastos.map(gastos =>
-        <tr key={gastos.idgasto}>
-          <td className="centrar__nro">{gastos.idgasto}</td>
-          <td>{gastos.fecha}</td>
-          <td>{gastos.nombre}</td>
-          <td>{gastos.descripcion}</td>
-          <td>{gastos.monto}</td>
-          <td>{gastos.categoria_gasto_id}</td>
-          <td>{gastos.metodo_pago_id}</td>
+      setLista(
+        ingresos.map(ingresos =>
+        <tr key={ingresos.idingreso}>
+          <td className="centrar__nro">{ingresos.idingreso}</td>
+          <td>{ingresos.fecha.substring(0,10)}</td>
+          <td>{ingresos.nombre}</td>
+          <td>{ingresos.descripcion}</td>
+          <td>{ingresos.monto}</td>
+          <td>{ingresos.categoria_ingreso_id}</td>
+          <td>{ingresos.metodo_pago_id}</td>
+          <td><button onClick={() => navigate('/ingresos-edicion/' + ingresos.idingreso)}>E</button></td>
+          <td><button onClick={() => eliminarIngreso(ingresos.idingreso)}>X</button></td>
         </tr>
       ));
     }).catch(function (error) {
@@ -95,6 +98,27 @@ const GastosHistorial = () => {
     });
   }
 
+  const eliminarIngreso = async (id) => {
+    await axios.delete('http://localhost:8080/api/ingreso/' + id, {
+      headers: {
+        'token-e': getJWT()
+      }
+    }).then(function (respuesta) {
+      Swal.fire({
+        icon: 'success',
+        title: 'INGRESO ELIMINADO',
+        text: 'El ingreso' + id + 'fue eliminado correctamente.'
+      });
+    }).catch(function (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'ERROR AL INTENTAR ELIMINAR EL INGRESO'
+      });
+
+      console.error(error);
+    });
+  }
+
   return (
     <>
       <div className="menubar">
@@ -102,12 +126,12 @@ const GastosHistorial = () => {
           <h4>Menu bar    .</h4>
           <h4>Logo</h4>
         </div>
-        <h1 style={{ color: '#FF570C', fontWeight: 'bold' }}>GASTOS</h1>
+        <h1 style={{ color: '#FF570C', fontWeight: 'bold' }}>INGRESOS</h1>
       </div>
 
       <div className="center">
         <div>
-          <button className="boton" onClick={() => {navigate('/gastos-registro')}}>REGISTRO</button>
+          <button className="boton" onClick={() => {navigate('/ingresos-registro')}}>REGISTRO</button>
           <button className="boton focus__button">HISTORIAL</button>
         </div>
       </div>
@@ -123,6 +147,8 @@ const GastosHistorial = () => {
               <th>MONTO</th>
               <th>CATEGORIA</th>
               <th>METODO</th>
+              <th>EDITAR</th>
+              <th>ELIMINAR</th>
             </tr>
           </thead>
           <tbody>{lista}</tbody>
@@ -143,4 +169,4 @@ const GastosHistorial = () => {
   )
 }
 
-export default GastosHistorial;
+export default IngresosHistorial;

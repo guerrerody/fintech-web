@@ -1,0 +1,29 @@
+.centrar__nro{
+  text-align: center;
+  font-weight: bold;
+}
+
+.contenedor{
+  margin: 100px;
+}
+
+.boton{
+  width: 300px;
+  height: 50px;
+  border-radius: 20%;
+  background-color: white;
+  color: black;
+  font-size: 32px;
+  font-weight: bold;
+}
+
+.focus__button{
+  background-color: #FF570C;
+  color: white;
+}
+
+.menubar{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
