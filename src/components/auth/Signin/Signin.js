@@ -34,12 +34,22 @@ const Signin = () => {
     event.preventDefault();
     const datos = new FormData(event.currentTarget);
 
-    let resp;
-
     await axios.post('http://localhost:8080/api/auth/login', {
       identificador: datos.get('email'),
       contrasenna: datos.get('password')
-    }).then(respuesta => resp = respuesta).catch(function (error) {
+    }).then(respuesta => {
+      if(respuesta != null && respuesta.data.usuario.idusuario > 0){
+        setLocalStorage(respuesta.data.token);
+
+        Swal.fire(
+          'Good job!',
+          'Inicio de sesion correcto!',
+          'success'
+        );
+
+        navigate("/gastos-historial");
+      }
+    }).catch(function (error) {
 
       if (error.response) {
         // La respuesta fue hecha y el servidor respondió con un código de estado
@@ -74,23 +84,8 @@ const Signin = () => {
           title: 'Error interno',
           text: 'Ocurrio un error al intentar enviar la peticion al servidor.'
         })
-
-        //console.log('Error', error.message);
       }
-      //console.log(error.config);
     });
-
-    if(resp != null && resp.data.usuario.idusuario > 0){
-      setLocalStorage(resp.data.token);
-
-      Swal.fire(
-        'Good job!',
-        'Inicio de sesion correcto!',
-        'success'
-      );
-
-      navigate("/gastos-historial");
-    }
 
   };
 
