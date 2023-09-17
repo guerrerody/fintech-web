@@ -7,6 +7,11 @@ import Footer from "components/shared/footer";
 import { Box, Button, TextField } from "@mui/material";
 import Swal from "sweetalert2";
 
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+
 
 const GastosRegistro = () => {
 
@@ -149,8 +154,13 @@ const GastosRegistro = () => {
           </div>
 
           <div>
-            <TextField margin="normal" required fullWidth autoFocus id="fecha" name="fecha"
-              label="Fecha" autoComplete="fecha" />
+            {/* <TextField margin="normal" required fullWidth autoFocus id="fecha" name="fecha"
+              label="Fecha" autoComplete="fecha" /> */}
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DemoContainer components={['DatePicker']}>
+                <DatePicker label="Fecha" required id="fecha" name="fecha" />
+              </DemoContainer>
+            </LocalizationProvider>
             <h2>text</h2>
             <h3>imagen</h3>
           </div>
