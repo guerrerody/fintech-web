@@ -1,13 +1,10 @@
-
+import { Box } from "@mui/material";
+import Copyright from "../Copyright";
 
 const Footer = () => {
   return (
-    <footer className="grey page-footer footer-copyright">
-      <div className="container">
-          FINTECH©
-          <a className="grey-text text-lighten-4 right" href="#!">FACEBOOK</a>
-          <a className="grey-text text-lighten-4 right" href="#!">INSTAGRAM</a>
-        </div>
+    <footer style={{ marginTop: '1rem', height: '7rem', backgroundColor: '#606470'}} className="grey page-footer footer-copyright">
+      <Box style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center'}}><Copyright /></Box>
     </footer>
   )
 }

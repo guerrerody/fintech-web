@@ -9,13 +9,12 @@
 
 .boton{
   width: 300px;
+  height: 50px;
   border-radius: 20%;
   background-color: white;
   color: black;
   font-size: 32px;
-  padding: 1em;
-  font-weight: bold !important;
-  height: inherit !important;
+  font-weight: bold;
 }
 
 .focus__button{
@@ -27,9 +26,4 @@
   display: flex;
   flex-direction: row;
   justify-content: space-around;
-}
-
-.table_head > tr > th {
-  font-weight: bold !important;
-  padding: 0 3% 0 3% !important;
 }

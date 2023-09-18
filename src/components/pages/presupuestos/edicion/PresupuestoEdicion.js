@@ -9,17 +9,14 @@ import Copyright from "components/Copyright";
 import Swal from "sweetalert2";
 
 
-const PrestamosEdicion = () => {
+const PresupuestoEdicion = () => {
 
   const navigate = useNavigate();
   let params = useParams();
 
-  const [metodos_pago, setMetodos_pago] = useState([]);
-
   useEffect(() => {
     verificarSesion();
-    rellenarOptions();
-    obtenerGasto();
+    obtenerPresupuesto();
   }, []);
 
   const verificarSesion = async () => {
@@ -55,43 +52,30 @@ const PrestamosEdicion = () => {
     });
   }
 
-  const rellenarOptions = async () => {
-    await axios.get('http://localhost:8080/api/generales/registrar-gastos', {
-      headers: {
-        'token-e': getJWT()
-      }
-    })
-      .then(function (arreglo) {
-        setMetodos_pago(arreglo.data.nombresMetPag.map(metPag => <option value={metPag[1]}>{metPag[0]}</option>));
-      })
-      .catch(function (error) { console.log("error interno: " + error) });
-  }
+  const obtenerPresupuesto = async () => {
 
-  const obtenerGasto = async () => {
-
-    await axios.get('http://localhost:8080/api/prestamo/' + params.id, {
+    await axios.get('http://localhost:8080/api/presupuesto/' + params.id, {
       headers: {
         'token-e': getJWT()
       }
     }).then(function (exito) {
 
-      console.log(exito);
-      let fecha = document.getElementById("fecha");
-      fecha.value = exito.data.prestamo.fecha.substring(0,10);
 
-      const fecha_cumplimiento = document.getElementById("fecha_cumplimiento");
-      fecha_cumplimiento.value = exito.data.prestamo.fecha_cumplimiento.substring(0,10);
+      let fecha = document.getElementById("fecha");
+      fecha.value = exito.data.presupuesto.fecha.substring(0,10);
+
+      const fecha_culminacion = document.getElementById("fecha_culminacion");
+      fecha_culminacion.value = exito.data.presupuesto.fecha_culminacion.substring(0,10);
+
+      const nombre = document.getElementById("nombre");
+      nombre.value = exito.data.presupuesto.nombre;
+
+      const monto = document.getElementById("monto");
+      monto.value = exito.data.presupuesto.monto;
 
       const descripcion = document.getElementById("descripcion");
-      descripcion.value = exito.data.prestamo.descripcion;
+      descripcion.value = exito.data.presupuesto.descripcion;
 
-      const metodo_pago = document.getElementById("metodo_pago");
-      metodo_pago.value = exito.data.prestamo.metodo_pago_id;
-
-      const total = document.getElementById("total");
-      total.value = exito.data.prestamo.total;
-
-      console.log(total);
     }).catch(function (error) { console.log(error) });
   }
 
@@ -100,12 +84,12 @@ const PrestamosEdicion = () => {
 
     const datos = new FormData(event.currentTarget);
 
-    await axios.put('http://localhost:8080/api/prestamo/' + params.id, {
+    await axios.put('http://localhost:8080/api/presupuesto/' + params.id, {
       fecha: datos.get('fecha'),
-      fecha_cumplimiento: datos.get('fecha_cumplimiento'),
+      fecha_culminacion: datos.get('fecha_culminacion'),
+      nombre: datos.get('nombre'),
       descripcion: datos.get('descripcion'),
-      total: datos.get('total'),
-      metodo_pago_id: datos.get('metodo_pago')
+      monto: datos.get('monto')
     }, {
       headers: {
         'token-e': getJWT()
@@ -137,38 +121,33 @@ const PrestamosEdicion = () => {
           <h4>Menu bar    .</h4>
           <h4>Logo</h4>
         </div>
-        <h1 style={{ color: '#FF570C', fontWeight: 'bold' }}>PRESTAMOS</h1>
+        <h1 style={{ color: '#FF570C', fontWeight: 'bold' }}>PRESUPUESTO</h1>
       </div>
 
       <div className="center">
         <div>
-          <h2 style={{ color: '#FF570C', fontWeight: 'bold' }}>INGRESO - {params.id}</h2>
+          <h2 style={{ color: '#FF570C', fontWeight: 'bold' }}>PRESUPUESTO - {params.id}</h2>
         </div>
       </div>
       {/* onSubmit={handleSubmit} */}
       <div className="container" >
-        <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 2 }} style={{ display: 'flex', justifyContent: 'space-around' }}>
+      <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 2 }} style={{ display: 'flex', justifyContent: 'space-around' }}>
           <div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)' }}>
               <TextField margin="normal" required fullWidth autoFocus id="fecha" name="fecha"
                 label="Fecha" autoComplete="fecha" />
 
-              <TextField margin="normal" required fullWidth autoFocus id="fecha_cumplimiento" name="fecha_cumplimiento"
-                label="fecha cumplimiento" autoComplete="" />
+              <TextField margin="normal" required fullWidth autoFocus id="fecha_culminacion" name="fecha_culminacion"
+                label="fecha culminacion" autoComplete="" />
+
+              <TextField margin="normal" required fullWidth autoFocus id="nombre" name="nombre"
+                label="Nombre" autoComplete="nombre"/>
+
+              <TextField margin="normal" required fullWidth autoFocus id="monto" name="monto"
+                label="monto" autoComplete="0.00" />
 
               <TextField margin="normal" required fullWidth autoFocus id="descripcion" name="descripcion"
                 label="Descripcion" autoComplete="descripcion" style={{ gridColumn: '1 / 3' }} />
-
-              <div>
-                <label>METODO DE PAGO</label>
-                <select className="browser-default" defaultValue={999} id="metodo_pago" name="metodo_pago">
-                  <option value="999" disabled selected>-- SELECCIONE --</option>
-                  {metodos_pago}
-                </select>
-              </div>
-
-              <TextField margin="normal" required fullWidth autoFocus id="total" name="total"
-                label="Total" autoComplete="0.00" />
 
               <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }} style={{ gridColumn: '2 / 3' }}>
                 EDITAR
@@ -188,5 +167,5 @@ const PrestamosEdicion = () => {
   )
 }
 
-export default PrestamosEdicion;
+export default PresupuestoEdicion;
 
