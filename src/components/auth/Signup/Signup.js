@@ -43,8 +43,8 @@ const Signup = () => {
         setLocalStorage(respuesta.data.token);
 
         Swal.fire(
-          'Good job!',
-          'Inicio de sesion correcto!',
+          'Buen trabajo!',
+          'Registro satisfactorio!',
           'success'
         );
 
@@ -106,7 +106,7 @@ const Signup = () => {
               label="Nombre de usuario" autoComplete="nombre_usuario" />
           </Grid>
           <Grid item xs={12}>
-            <TextField margin="normal" required fullWidth autoFocus id="email" name="email"
+            <TextField margin="normal" required fullWidth id="email" name="email"
               label="Correo electrónico" autoComplete="email" />
           </Grid>
           <Grid item xs={6}>

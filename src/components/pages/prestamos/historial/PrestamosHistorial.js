@@ -6,6 +6,20 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { getJWT } from "components/utils/localStorage";
 import Footer from "components/shared/footer";
+import formatFecha from "components/utils/helpers";
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
+
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+import MenuApp from "components/shared/menuBar";
+
+import logo from 'assets/images/logo.svg';
 
 
 const PrestamosHistorial = () => {
@@ -52,21 +66,24 @@ const PrestamosHistorial = () => {
       setTotal(respuesta.data.total);
       const array = [];
         for(let i = 1; i <= (total / 5 + 0.9); i++){
-          array.push(<button key={i} className="col s1" onClick={() => { paginacion(i) }}>{i}</button>);
+          array.push(<Button style={{ backgroundColor:'#FF570C', color:'#FFFFFF', borderRadius: 0 }} key={i} className="col s1" onClick={() => { paginacion(i) }}>{i}</Button>);
         }
 
         setBotones(array);
-      setLista(prestamos.map(prestamos =>
-        <tr key={prestamos.idprestamo}>
-          <td className="centrar__nro">{prestamos.idprestamo}</td>
-          <td>{prestamos.fecha.substring(0,10)}</td>
-          <td>{prestamos.fecha_cumplimiento.substring(0,10)}</td>
-          <td>{prestamos.descripcion}</td>
-          <td>{prestamos.total}</td>
-          <td>{prestamos.metodo_pago_id}</td>
-          <td><button onClick={() => navigate('/prestamos-edicion/' + prestamos.idprestamo)}>E</button></td>
-          <td><button onClick={() => eliminarPrestamo(prestamos.idprestamo)}>X</button></td>
-        </tr>
+      setLista(prestamos.map(prestamos =><>
+        <TableRow
+        key={prestamos.idprestamo}
+        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+        >
+          <TableCell component="th" scope="row">{prestamos.idprestamo}</TableCell>
+          <TableCell>{prestamos.fecha.substring(0,10)}</TableCell>
+          <TableCell>{prestamos.fecha_cumplimiento.substring(0,10)}</TableCell>
+          <TableCell>{prestamos.descripcion}</TableCell>
+          <TableCell>{prestamos.total}</TableCell>
+          <TableCell>{prestamos.metodo_pago_id}</TableCell>
+          <TableCell><Button variant="contained" onClick={() => navigate('/prestamos-edicion/' + prestamos.idprestamo)}>E</Button></TableCell>
+          <TableCell><Button variant="contained" onClick={() => eliminarPrestamo(prestamos.idprestamo)}>X</Button></TableCell>
+        </TableRow></>
       ));
     }).catch(function (error) {
       if (error.response) {
@@ -118,47 +135,49 @@ const PrestamosHistorial = () => {
 
   return (
     <>
+      <MenuApp />
       <div className="menubar">
         <div className="menubar" style={{ justifyContent: 'space-around'}}>
-          <h4>Menu bar    .</h4>
-          <h4>Logo</h4>
+          <img src={logo} alt="Logo" style={{ width: 150 }}/>
         </div>
         <h1 style={{ color: '#FF570C', fontWeight: 'bold' }}>PRESTAMOS</h1>
       </div>
 
-      <div className="center">
+      <Box sx={{ display:'flex', justifyContent:'center', marginBottom: 5 }}>
         <div>
-          <button className="boton" onClick={() => {navigate('/prestamos-registro')}}>REGISTRO</button>
-          <button className="boton focus__button">HISTORIAL</button>
+          <Button className="boton" onClick={() => { navigate('/prestamos-registro') }}>REGISTRO</Button>
+          <Button variant="contained" className="boton focus__button">HISTORIAL</Button>
         </div>
-      </div>
+      </Box>
 
-      <div className="container">
-        <table className="striped">
-          <thead>
-            <tr>
-              <th>NUMERO</th>
-              <th>FECHA</th>
-              <th>FECHA CUMPLIMIENTO</th>
-              <th>DESCRIPCION</th>
-              <th>TOTAL</th>
-              <th>METODO DE PAGO</th>
-              <th>EDITAR</th>
-              <th>ELIMINAR</th>
-            </tr>
-          </thead>
-          <tbody>{lista}</tbody>
-        </table>
-      </div>
 
-      <div className="container ">
-        <div className="right-align" style={{ margin: '40px 0px' }}>
-          <button className="col s1" onClick={() => { atras() }}>atras</button>
+      <Box sx={{ display:'flex', justifyContent:'center'}}>
+        <TableContainer component={Paper} sx={{ width: '70%'}}>
+          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <TableHead className="table_head">
+              <TableRow>
+                <TableCell>Nro</TableCell>
+                <TableCell>Fecha</TableCell>
+                <TableCell>Fecha Cumplimiento</TableCell>
+                <TableCell>Descripcion</TableCell>
+                <TableCell>Total</TableCell>
+                <TableCell>Metodo de Pago</TableCell>
+                <TableCell>EDITAR</TableCell>
+                <TableCell>ELIMINAR</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>{lista}</TableBody>
+          </Table>
+        </TableContainer>
+      </Box>
+
+      <Box sx={{ m: 4, display: 'flex', justifyContent:'flex-end'}}>
+        <div style={{ margin: '40px 0px',  }}>
+          <Button style={{ backgroundColor:'#FF570C', color:'#FFFFFF', borderRadius: 0 }} className="col s1" onClick={() => { atras() }}>Atras</Button>
           {botones}
-          <button className="col s1" onClick={() => { siguiente() }}>siguiente</button>
+          <Button style={{ backgroundColor:'#FF570C', color:'#FFFFFF', borderRadius: 0 }} className="col s1" onClick={() => { siguiente() }}>Siguiente</Button>
         </div>
-
-      </div>
+      </Box>
 
       <Footer></Footer>
     </>

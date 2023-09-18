@@ -4,8 +4,17 @@ import { Link as RouterLink, useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { getJWT } from "../../../utils/localStorage";
 import Footer from "components/shared/footer";
-import { Box, Button, TextField } from "@mui/material";
+import { Box, Button, TextField, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import Swal from "sweetalert2";
+
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import ingresos from 'assets/images/ingresos.jpeg';
+import MenuApp from "components/shared/menuBar";
+
+import logo from 'assets/images/logo.svg';
 
 
 const IngresosRegistro = () => {
@@ -38,10 +47,10 @@ const IngresosRegistro = () => {
       }
     })
       .then(function (arreglo) {
-        setCategoria_ingresos(arreglo.data.nombresCatIng.map(catIng => <option value={catIng[1]}>{catIng[0]}</option>));
-        setMetodos_pago(arreglo.data.nombresMetPag.map(metPag => <option value={metPag[1]}>{metPag[0]}</option>));
-        setModalidad(arreglo.data.nombresModPag.map(modPag => <option value={modPag[1]}>{modPag[0]}</option>));
-        setImpuesto(arreglo.data.nombresImp.map(imp => <option value={imp[1]}>{imp[0]}</option>));
+        setCategoria_ingresos(arreglo.data.nombresCatIng.map(catIng => <MenuItem value={catIng[1]}>{catIng[0]}</MenuItem>));
+        setMetodos_pago(arreglo.data.nombresMetPag.map(metPag => <MenuItem value={metPag[1]}>{metPag[0]}</MenuItem>));
+        setModalidad(arreglo.data.nombresModPag.map(modPag => <MenuItem value={modPag[1]}>{modPag[0]}</MenuItem>));
+        setImpuesto(arreglo.data.nombresImp.map(imp => <MenuItem value={imp[1]}>{imp[0]}</MenuItem>));
       })
       .catch(function (error) { console.log("error interno: " + error) });
   }
@@ -88,71 +97,76 @@ const IngresosRegistro = () => {
 
   return (
     <>
+      <MenuApp />
       <div className="menubar">
         <div className="menubar" style={{ justifyContent: 'space-around' }}>
-          <h4>Menu bar    .</h4>
-          <h4>Logo</h4>
+          <img src={logo} alt="Logo" style={{ width: 150 }}/>
         </div>
         <h1 style={{ color: '#FF570C', fontWeight: 'bold' }}>INGRESOS</h1>
       </div>
 
-      <div className="center">
+      <Box sx={{ display:'flex', justifyContent:'center', marginBottom: 5 }}>
         <div>
-          <button className="boton focus__button">REGISTRO</button>
-          <button className="boton" onClick={() => { navigate('/ingresos-historial') }}>HISTORIAL</button>
+          <Button variant="contained" className="boton focus__button">REGISTRO</Button>
+          <Button className="boton" onClick={() => { navigate('/ingresos-historial') }}>HISTORIAL</Button>
         </div>
-      </div>
+      </Box>
+
       {/* onSubmit={handleSubmit} */}
       <div className="container" >
-        <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 2 }} style={{ display: 'flex', justifyContent: 'space-around' }}>
-          <div>
+        <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 2, mx: 5, p: 3, backgroundColor:"#f7f7f7" }} style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <div style={{width: '55%'}}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)' }}>
-              <TextField margin="normal" required fullWidth autoFocus id="nombre" name="nombre"
-                label="Nombre" autoComplete="nombre" />
-              <div>
-                <label>CATEGORIA INGRESO</label>
-                <select className="browser-default" defaultValue={999} id="categoria_ingreso" name="categoria_ingreso">
-                  <option value="999" disabled selected>-- SELECCIONE --</option>
+              <TextField sx={{my: 3}} margin="normal" required fullWidth autoFocus id="nombre" name="nombre"
+                label="Nombre" autoComplete="nombre" variant="standard" />
+              <FormControl variant="standard" sx={{ ml: 2, my: 3, minWidth: 120 }}>
+                <InputLabel id="categoria_ingreso-label">CATEGORIA INGRESO</InputLabel>
+                <Select labelId="categoria_ingreso-label" className="browser-default" defaultValue={999} id="categoria_ingreso" name="categoria_ingreso">
+                  <MenuItem value="999" disabled selected>-- SELECCIONE --</MenuItem>
                   {categoria_ingresos}
-                </select>
-              </div>
-              <div>
-                <label>METODO DE PAGO</label>
-                <select className="browser-default" defaultValue={999} id="metodo_pago" name="metodo_pago">
-                  <option value="999" disabled selected>-- SELECCIONE --</option>
+                </Select>
+              </FormControl>
+              <FormControl variant="standard" sx={{ ml: 2, my: 3, minWidth: 120 }}>
+                <InputLabel id="metodo_pago-label">METODO DE PAGO</InputLabel>
+                <Select labelId="metodo_pago-label" className="browser-default" defaultValue={999} id="metodo_pago" name="metodo_pago">
+                  <MenuItem value="999" disabled selected>-- SELECCIONE --</MenuItem>
                   {metodos_pago}
-                </select>
-              </div>
-              <div>
-                <label>MODALIDAD DE PAGO</label>
-                <select className="browser-default" defaultValue={999} id="modalidad_pago" name="modalidad_pago">
-                  <option value="999" disabled selected>-- SELECCIONE --</option>
+                </Select>
+              </FormControl>
+              <FormControl variant="standard" sx={{ ml: 2, my: 3, minWidth: 120 }}>
+                <InputLabel id="modalidad_pago-label">MODALIDAD DE PAGO</InputLabel>
+                <Select labelId="modalidad_pago-label" className="browser-default" defaultValue={999} id="modalidad_pago" name="modalidad_pago">
+                  <MenuItem value="999" disabled selected>-- SELECCIONE --</MenuItem>
                   {modalidad}
-                </select>
-              </div>
-              <TextField margin="normal" required fullWidth autoFocus id="descripcion" name="descripcion"
-                label="Descripcion" autoComplete="descripcion" style={{ gridColumn: '1 / 3' }} />
-              <div>
-                <label>IMPUESTO</label>
-                <select className="browser-default" defaultValue={999} id="impuesto" name="impuesto">
-                  <option value="999" disabled selected>-- SELECCIONE --</option>
+                </Select>
+              </FormControl>
+              <TextField sx={{my: 3}} margin="normal" required fullWidth autoFocus id="descripcion" name="descripcion"
+                label="Descripcion" autoComplete="descripcion" style={{ gridColumn: '1 / 3' }} variant="standard" />
+              <FormControl variant="standard" sx={{ mr: 2, my: 3, minWidth: 120 }}>
+                <InputLabel id="impuesto-label">IMPUESTO</InputLabel>
+                <Select labelId="impuesto-label" className="browser-default" defaultValue={999} id="impuesto" name="impuesto">
+                  <MenuItem value="999" disabled selected>-- SELECCIONE --</MenuItem>
                   {impuesto}
-                </select>
-              </div>
-              <TextField margin="normal" required fullWidth autoFocus id="monto" name="monto"
-                label="Monto" autoComplete="monto" />
+                </Select>
+              </FormControl>
+              <TextField type="number" sx={{my: 3}} margin="normal" fullWidth autoFocus id="monto" name="monto"
+                label="Monto" autoComplete="monto" variant="standard" InputLabelProps={{ shrink: true, required: true }}/>
 
-              <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }} style={{ gridColumn: '2 / 3' }}>
+              <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2, borderRadius: "8px" }} style={{ gridColumn: '2 / 3' }}>
                 REGISTRAR
               </Button>
             </div>
           </div>
 
-          <div>
-            <TextField margin="normal" required fullWidth autoFocus id="fecha" name="fecha"
-              label="Fecha" autoComplete="fecha" />
-            <h2>text</h2>
-            <h3>imagen</h3>
+          <div style={{ width: '35%'}}>
+            <TextField type="date" margin="normal" fullWidth autoFocus id="fecha" name="fecha"
+              label="Fecha" autoComplete="fecha" placeholder="AAAA-MM-DD" variant="standard" InputLabelProps={{ shrink: true, required: true }}/>
+            <h3 >
+            !RECUERDA AHORRAR UNA PARTE DE TUS INGRESOS Y VERÁS QUE LOGRARÁS MUY PRONTO TUS METAS!
+            </h3>
+            <Box>
+            <img src={ingresos} alt="ingresos" style={{ width: '90%', borderRadius:'15px' }}/>
+            </Box>
           </div>
         </Box>
       </div>

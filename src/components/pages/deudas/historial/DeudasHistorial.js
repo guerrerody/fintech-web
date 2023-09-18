@@ -6,6 +6,20 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { getJWT } from "components/utils/localStorage";
 import Footer from "components/shared/footer";
+import formatFecha from "components/utils/helpers";
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
+
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+import MenuApp from "components/shared/menuBar";
+
+import logo from 'assets/images/logo.svg';
 
 
 const DeudasHistorial = () => {
@@ -52,17 +66,19 @@ const DeudasHistorial = () => {
       setTotal(respuesta.data.total);
       const array = [];
         for(let i = 1; i <= (total / 5 + 0.9); i++){
-          array.push(<button key={i} className="col s1" onClick={() => { paginacion(i) }}>{i}</button>);
+          array.push(<Button style={{ backgroundColor:'#FF570C', color:'#FFFFFF', borderRadius: 0 }} key={i} className="col s1" onClick={() => { paginacion(i) }}>{i}</Button>);
         }
 
         setBotones(array);
-      setLista(deudas.map(deudas =>
-        <tr key={deudas.iddeudas}>
-          <td className="centrar__nro">{deudas.iddeudas}</td>
-          <td>{deudas.fecha.substring(0,10)}</td>
-          <td>{deudas.descripcion}</td>
-          <td>{deudas.gasto_id}</td>
-        </tr>
+      setLista(deudas.map(deudas => <>
+        <TableRow 
+        key={deudas.iddeudas}
+        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+          <TableCell component="th" scope="row">{deudas.iddeudas}</TableCell>
+          <TableCell>{deudas.fecha.substring(0,10)}</TableCell>
+          <TableCell>{deudas.descripcion}</TableCell>
+          <TableCell>{deudas.gasto_id}</TableCell>
+        </TableRow></>
       ));
     }).catch(function (error) {
       if (error.response) {
@@ -93,42 +109,43 @@ const DeudasHistorial = () => {
 
   return (
     <>
+      <MenuApp />
       <div className="menubar">
         <div className="menubar" style={{ justifyContent: 'space-around'}}>
-          <h4>Menu bar    .</h4>
-          <h4>Logo</h4>
+          <img src={logo} alt="Logo" style={{ width: 150 }}/>
         </div>
         <h1 style={{ color: '#FF570C', fontWeight: 'bold' }}>DEUDAS</h1>
       </div>
 
-      <div className="center">
+      <Box sx={{ display:'flex', justifyContent:'center', marginBottom: 5 }}>
         <div>
-          <button className="boton focus__button">HISTORIAL</button>
+          <Button variant="contained" className="boton focus__button">HISTORIAL</Button>
         </div>
-      </div>
+      </Box>
 
-      <div className="container">
-        <table className="striped">
-          <thead>
-            <tr>
-              <th>NUMERO</th>
-              <th>FECHA</th>
-              <th>DESCRIPCION</th>
-              <th>Gasto ID</th>
-            </tr>
-          </thead>
-          <tbody>{lista}</tbody>
-        </table>
-      </div>
+      <Box sx={{ display:'flex', justifyContent:'center'}}>
+        <TableContainer component={Paper} sx={{ width: '70%'}}>
+          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <TableHead className="table_head">
+              <TableRow>
+                <TableCell>Nro</TableCell>
+                <TableCell>Fecha</TableCell>
+                <TableCell>Descripcion</TableCell>
+                <TableCell>Gasto ID</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>{lista}</TableBody>
+          </Table>
+        </TableContainer>
+      </Box>
 
-      <div className="container ">
-        <div className="right-align" style={{ margin: '40px 0px' }}>
-          <button className="col s1" onClick={() => { atras() }}>atras</button>
+      <Box sx={{ m: 4, display: 'flex', justifyContent:'flex-end'}}>
+        <div style={{ margin: '40px 0px',  }}>
+          <Button style={{ backgroundColor:'#FF570C', color:'#FFFFFF', borderRadius: 0 }} className="col s1" onClick={() => { atras() }}>Atras</Button>
           {botones}
-          <button className="col s1" onClick={() => { siguiente() }}>siguiente</button>
+          <Button style={{ backgroundColor:'#FF570C', color:'#FFFFFF', borderRadius: 0 }} className="col s1" onClick={() => { siguiente() }}>Siguiente</Button>
         </div>
-
-      </div>
+      </Box>
 
       <Footer></Footer>
     </>

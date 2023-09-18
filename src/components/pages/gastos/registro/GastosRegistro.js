@@ -11,7 +11,7 @@ import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import gastos from 'assets/images/gastos.jpg';
+import gastos from 'assets/images/gastos.jpeg';
 import MenuApp from "components/shared/menuBar";
 
 import logo from 'assets/images/logo.svg';
@@ -148,8 +148,8 @@ const GastosRegistro = () => {
                   {impuesto}
                 </Select>
               </FormControl>
-              <TextField sx={{my: 3}} margin="normal" required fullWidth autoFocus id="monto" name="monto"
-                label="Monto" autoComplete="monto" variant="standard" />
+              <TextField type="number" sx={{my: 3}} margin="normal" fullWidth autoFocus id="monto" name="monto"
+                label="Monto" autoComplete="monto" variant="standard" InputLabelProps={{ shrink: true, required: true }}/>
 
               <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2, borderRadius: "8px" }} style={{ gridColumn: '2 / 3' }}>
                 REGISTRAR
@@ -158,15 +158,10 @@ const GastosRegistro = () => {
           </div>
 
           <div style={{ width: '35%'}}>
-            {/* <TextField margin="normal" required fullWidth autoFocus id="fecha" name="fecha"
-              label="Fecha" autoComplete="fecha" /> */}
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DemoContainer components={['DatePicker']}>
-                <DatePicker label="Fecha" required id="fecha" name="fecha"/>
-              </DemoContainer>
-            </LocalizationProvider>
+            <TextField  type="date" margin="normal" fullWidth autoFocus id="fecha" name="fecha"
+              label="Fecha" autoComplete="fecha" placeholder="AAAA-MM-DD" variant="standard" InputLabelProps={{ shrink: true, required: true }} />
             <h3 >
-            !RECUERDA AHORRAR UNA PARTE DE TUS INGRESOS Y VERÁS QUE LOGRARÁS MUY PRONTO TUS METAS!
+            ¡LOS GASTOS A CREDITO HARAN QUE TU DINERO VUELE LEJOS DE TUS MANOS!
             </h3>
             <Box>
             <img src={gastos} alt="gastos" style={{ width: '90%', borderRadius:'15px' }}/>

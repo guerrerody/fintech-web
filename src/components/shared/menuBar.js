@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Link } from "react-router-dom";
 import { Container, Box } from "@mui/material";
-import Button from '@mui/material/Button';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import Divider from '@mui/material/Divider';
@@ -56,7 +55,7 @@ const MenuApp = () => {
     },
     {
       text: 'Metas',
-      url: '/'
+      url: '#'
     }
   ]
 

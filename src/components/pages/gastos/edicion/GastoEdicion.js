@@ -6,7 +6,7 @@ import { getJWT } from "../../../utils/localStorage";
 import Footer from "components/shared/footer";
 import { Box, Button, TextField, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import Swal from "sweetalert2";
-import gastos from 'assets/images/gastos.jpg';
+import gastos from 'assets/images/gastos.jpeg';
 
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -108,6 +108,7 @@ const GastosEdicion = () => {
 
       const impuesto = document.getElementById("impuesto");
       impuesto.value = exito.data.gasto.impuesto_id;
+      // setImpuesto(exito.data.gasto.impuesto_id)
 
       const monto = document.getElementById("monto");
       monto.value = exito.data.gasto.monto;
@@ -195,7 +196,7 @@ const GastosEdicion = () => {
                   {modalidad}
                 </Select>
               </FormControl>
-              <TextField sx={{my: 3}} margin="normal" required fullWidth autoFocus id="descripcion" name="descripcion"
+              <TextField sx={{my: 3}} margin="normal" required fullWidth id="descripcion" name="descripcion"
                 label="Descripcion" autoComplete="descripcion" style={{ gridColumn: '1 / 3' }} variant="standard" />
               <FormControl variant="standard" sx={{ mr: 2, my: 3, minWidth: 120 }}>
                 <InputLabel id="impuesto-label">IMPUESTO</InputLabel>
@@ -204,8 +205,8 @@ const GastosEdicion = () => {
                   {impuesto}
                 </Select>
               </FormControl>
-              <TextField sx={{my: 3}} margin="normal" required fullWidth autoFocus id="monto" name="monto"
-                label="Monto" autoComplete="monto" variant="standard" />
+              <TextField type="number" sx={{my: 3}} margin="normal" fullWidth id="monto" name="monto"
+                label="Monto" autoComplete="monto" variant="standard" InputLabelProps={{ shrink: true, required: true }}/>
               <div style={{ display:'flex', justifyContent:'flex-end', gridColumn: '2 / 3'}}>
               <Button type="submit"  variant="contained" sx={{ mt: 3, mb: 2, borderRadius: "8px", width: '70%' }} >
                 Editar
@@ -218,13 +219,10 @@ const GastosEdicion = () => {
           </div>
 
           <div style={{ width: '35%'}}>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DemoContainer components={['DatePicker']}>
-                <DatePicker label="Fecha" required id="fecha" name="fecha"/>
-              </DemoContainer>
-            </LocalizationProvider>
+            <TextField type="date" margin="normal" required fullWidth autoFocus id="fecha" name="fecha"
+              label="Fecha" autoComplete="fecha" placeholder="AAAA-MM-DD" variant="standard" InputLabelProps={{ shrink: true, required: true }}  />
             <h3 >
-            !RECUERDA AHORRAR UNA PARTE DE TUS INGRESOS Y VERÁS QUE LOGRARÁS MUY PRONTO TUS METAS!
+            ¡LOS GASTOS A CREDITO HARAN QUE TU DINERO VUELE LEJOS DE TUS MANOS!
             </h3>
             <Box>
             <img src={gastos} alt="gastos" style={{ width: '90%', borderRadius:'15px' }}/>
