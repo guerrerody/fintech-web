@@ -48,6 +48,11 @@ const theme = createTheme({
         color: 'gray',
       },
     },
+    MuiInputLabel: {
+      defaultProps: {
+        shrink: true,
+      }
+    }
   },
 });
 

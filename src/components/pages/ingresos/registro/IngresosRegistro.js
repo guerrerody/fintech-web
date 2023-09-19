@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link as RouterLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import axios from 'axios';
 import { getJWT } from "../../../utils/localStorage";
@@ -7,10 +7,6 @@ import Footer from "components/shared/footer";
 import { Box, Button, TextField, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import Swal from "sweetalert2";
 
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import ingresos from 'assets/images/ingresos.jpeg';
 import MenuApp from "components/shared/menuBar";
 
@@ -23,8 +19,6 @@ const IngresosRegistro = () => {
 
   const [categoria_ingresos, setCategoria_ingresos] = useState([]);
   const [metodos_pago, setMetodos_pago] = useState([]);
-  const [modalidad, setModalidad] = useState([]);
-  const [impuesto, setImpuesto] = useState([]);
 
   useEffect(() => {
     verificarSesion();
@@ -49,8 +43,6 @@ const IngresosRegistro = () => {
       .then(function (arreglo) {
         setCategoria_ingresos(arreglo.data.nombresCatIng.map(catIng => <MenuItem value={catIng[1]}>{catIng[0]}</MenuItem>));
         setMetodos_pago(arreglo.data.nombresMetPag.map(metPag => <MenuItem value={metPag[1]}>{metPag[0]}</MenuItem>));
-        setModalidad(arreglo.data.nombresModPag.map(modPag => <MenuItem value={modPag[1]}>{modPag[0]}</MenuItem>));
-        setImpuesto(arreglo.data.nombresImp.map(imp => <MenuItem value={imp[1]}>{imp[0]}</MenuItem>));
       })
       .catch(function (error) { console.log("error interno: " + error) });
   }
@@ -66,9 +58,7 @@ const IngresosRegistro = () => {
       descripcion: datos.get('descripcion'),
       monto: datos.get('monto'),
       categoria_ingreso_id: datos.get('categoria_ingreso'),
-      modalidad_pago_id: datos.get('modalidad_pago'),
       metodo_pago_id: datos.get('metodo_pago'),
-      impuesto_id: datos.get('impuesto')
     }, {
       headers: {
         'token-e': getJWT()
@@ -118,7 +108,8 @@ const IngresosRegistro = () => {
           <div style={{width: '55%'}}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)' }}>
               <TextField sx={{my: 3}} margin="normal" required fullWidth autoFocus id="nombre" name="nombre"
-                label="Nombre" autoComplete="nombre" variant="standard" />
+                label="Nombre" autoComplete="nombre" style={{ gridColumn: '1 / 3' }} variant="standard" />
+
               <FormControl variant="standard" sx={{ ml: 2, my: 3, minWidth: 120 }}>
                 <InputLabel id="categoria_ingreso-label">CATEGORIA INGRESO</InputLabel>
                 <Select labelId="categoria_ingreso-label" className="browser-default" defaultValue={999} id="categoria_ingreso" name="categoria_ingreso">
@@ -126,6 +117,7 @@ const IngresosRegistro = () => {
                   {categoria_ingresos}
                 </Select>
               </FormControl>
+
               <FormControl variant="standard" sx={{ ml: 2, my: 3, minWidth: 120 }}>
                 <InputLabel id="metodo_pago-label">METODO DE PAGO</InputLabel>
                 <Select labelId="metodo_pago-label" className="browser-default" defaultValue={999} id="metodo_pago" name="metodo_pago">
@@ -133,24 +125,12 @@ const IngresosRegistro = () => {
                   {metodos_pago}
                 </Select>
               </FormControl>
-              <FormControl variant="standard" sx={{ ml: 2, my: 3, minWidth: 120 }}>
-                <InputLabel id="modalidad_pago-label">MODALIDAD DE PAGO</InputLabel>
-                <Select labelId="modalidad_pago-label" className="browser-default" defaultValue={999} id="modalidad_pago" name="modalidad_pago">
-                  <MenuItem value="999" disabled selected>-- SELECCIONE --</MenuItem>
-                  {modalidad}
-                </Select>
-              </FormControl>
+
               <TextField sx={{my: 3}} margin="normal" required fullWidth autoFocus id="descripcion" name="descripcion"
                 label="Descripcion" autoComplete="descripcion" style={{ gridColumn: '1 / 3' }} variant="standard" />
-              <FormControl variant="standard" sx={{ mr: 2, my: 3, minWidth: 120 }}>
-                <InputLabel id="impuesto-label">IMPUESTO</InputLabel>
-                <Select labelId="impuesto-label" className="browser-default" defaultValue={999} id="impuesto" name="impuesto">
-                  <MenuItem value="999" disabled selected>-- SELECCIONE --</MenuItem>
-                  {impuesto}
-                </Select>
-              </FormControl>
+
               <TextField type="number" sx={{my: 3}} margin="normal" fullWidth autoFocus id="monto" name="monto"
-                label="Monto" autoComplete="monto" variant="standard" InputLabelProps={{ shrink: true, required: true }}/>
+                label="Monto" autoComplete="monto" style={{ gridColumn: '1 / 3' }} variant="standard" InputLabelProps={{ shrink: true, required: true }}/>
 
               <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2, borderRadius: "8px" }} style={{ gridColumn: '2 / 3' }}>
                 REGISTRAR

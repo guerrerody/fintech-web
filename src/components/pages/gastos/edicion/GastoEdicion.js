@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link as RouterLink, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import axios from 'axios';
 import { getJWT } from "../../../utils/localStorage";
@@ -8,10 +8,6 @@ import { Box, Button, TextField, FormControl, InputLabel, MenuItem, Select } fro
 import Swal from "sweetalert2";
 import gastos from 'assets/images/gastos.jpeg';
 
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import MenuApp from "components/shared/menuBar";
 
 import logo from 'assets/images/logo.svg';
@@ -26,6 +22,13 @@ const GastosEdicion = () => {
   const [metodos_pago, setMetodos_pago] = useState([]);
   const [modalidad, setModalidad] = useState([]);
   const [impuesto, setImpuesto] = useState([]);
+
+  // Estados para almacenar los valores seleccionados de cada lista desplegable
+  const [selectedCategoriaGasto, setSelectedCategoriaGasto] = useState("");
+  const [selectedMetodoPago, setSelectedMetodoPago] = useState("");
+  const [selectedModalidadPago, setSelectedModalidadPago] = useState("");
+  const [selectedImpuesto, setSelectedImpuesto] = useState("");
+
 
   useEffect(() => {
     verificarSesion();
@@ -94,24 +97,17 @@ const GastosEdicion = () => {
       const nombre = document.getElementById("nombre");
       nombre.value = exito.data.gasto.nombre;
 
-      const categoria_gasto = document.getElementById("categoria_gasto");
-      categoria_gasto.value = exito.data.gasto.categoria_gasto_id;
-
-      const metodo_pago = document.getElementById("metodo_pago");
-      metodo_pago.value = exito.data.gasto.metodo_pago_id;
-
-      const modalidad_pago = document.getElementById("modalidad_pago");
-      modalidad_pago.value = exito.data.gasto.modalidad_pago_id;
-
       const descripcion = document.getElementById("descripcion");
       descripcion.value = exito.data.gasto.descripcion;
 
-      const impuesto = document.getElementById("impuesto");
-      impuesto.value = exito.data.gasto.impuesto_id;
-      // setImpuesto(exito.data.gasto.impuesto_id)
-
       const monto = document.getElementById("monto");
       monto.value = exito.data.gasto.monto;
+
+      setSelectedCategoriaGasto(exito.data.gasto.categoria_gasto_id);
+      setSelectedMetodoPago(exito.data.gasto.metodo_pago_id);
+      setSelectedModalidadPago(exito.data.gasto.modalidad_pago_id);
+      setSelectedImpuesto(exito.data.gasto.impuesto_id);
+
     }).catch(function (error) { console.log(error) });
   }
 
@@ -177,21 +173,21 @@ const GastosEdicion = () => {
                 label="Nombre" autoComplete="nombre" variant="standard" />
               <FormControl variant="standard" sx={{ mr: 2, my: 3, minWidth: 120 }}>
                 <InputLabel id="categoria_gasto-label">CATEGORIA GASTO</InputLabel>
-                <Select labelId="categoria_gasto-label" className="browser-default" defaultValue={0} id="categoria_gasto" name="categoria_gasto">
+                <Select labelId="categoria_gasto-label" className="browser-default" value={selectedCategoriaGasto} onChange={(e) => setSelectedCategoriaGasto(e.target.value)} id="categoria_gasto" name="categoria_gasto">
                   <MenuItem value="0" disabled selected>-- SELECCIONE --</MenuItem>
                   {categoria_gastos}
                 </Select>
               </FormControl>
               <FormControl variant="standard" sx={{ mr: 2, my: 3, minWidth: 120 }}>
                 <InputLabel id="metodo_pago-label">METODO DE PAGO</InputLabel>
-                <Select labelId="metodo_pago-label" className="browser-default" defaultValue={0} id="metodo_pago" name="metodo_pago">
+                <Select labelId="metodo_pago-label" className="browser-default" value={selectedMetodoPago} onChange={(e) => setSelectedMetodoPago(e.target.value)} id="metodo_pago" name="metodo_pago">
                   <MenuItem value="0" disabled selected>-- SELECCIONE --</MenuItem>
                   {metodos_pago}
                 </Select>
               </FormControl>
               <FormControl variant="standard" sx={{ mr: 2, my: 3, minWidth: 120 }}>
                 <InputLabel id="modalidad_pago-label">MODALIDAD DE PAGO</InputLabel>
-                <Select labelId="modalidad_pago-label" className="browser-default" defaultValue={0} id="modalidad_pago" name="modalidad_pago">
+                <Select labelId="modalidad_pago-label" className="browser-default" value={selectedModalidadPago} onChange={(e) => setSelectedModalidadPago(e.target.value)} id="modalidad_pago" name="modalidad_pago">
                   <MenuItem value="0" disabled selected>-- SELECCIONE --</MenuItem>
                   {modalidad}
                 </Select>
@@ -200,7 +196,7 @@ const GastosEdicion = () => {
                 label="Descripcion" autoComplete="descripcion" style={{ gridColumn: '1 / 3' }} variant="standard" />
               <FormControl variant="standard" sx={{ mr: 2, my: 3, minWidth: 120 }}>
                 <InputLabel id="impuesto-label">IMPUESTO</InputLabel>
-                <Select labelId="impuesto-label" className="browser-default" defaultValue={0} id="impuesto" name="impuesto">
+                <Select labelId="impuesto-label" className="browser-default" value={selectedImpuesto} onChange={(e) => setSelectedImpuesto(e.target.value)} id="impuesto" name="impuesto">
                   <MenuItem value="0" disabled selected>-- SELECCIONE --</MenuItem>
                   {impuesto}
                 </Select>

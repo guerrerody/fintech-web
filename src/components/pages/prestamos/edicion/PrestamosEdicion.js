@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link as RouterLink, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import axios from 'axios';
 import { getJWT } from "../../../utils/localStorage";
@@ -9,14 +9,9 @@ import Swal from "sweetalert2";
 
 import prestamos from 'assets/images/prestamos.jpeg';
 
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import MenuApp from "components/shared/menuBar";
 
 import logo from 'assets/images/logo.svg';
-
 
 
 const PrestamosEdicion = () => {
@@ -25,6 +20,7 @@ const PrestamosEdicion = () => {
   let params = useParams();
 
   const [metodos_pago, setMetodos_pago] = useState([]);
+  const [selectedMetodoPago, setSelectedMetodoPago] = useState("");
 
   useEffect(() => {
     verificarSesion();
@@ -95,11 +91,10 @@ const PrestamosEdicion = () => {
       const descripcion = document.getElementById("descripcion");
       descripcion.value = exito.data.prestamo.descripcion;
 
-      const metodo_pago = document.getElementById("metodo_pago");
-      metodo_pago.value = exito.data.prestamo.metodo_pago_id;
-
       const total = document.getElementById("total");
       total.value = exito.data.prestamo.total;
+
+      setSelectedMetodoPago(exito.data.prestamo.metodo_pago_id);
 
       console.log(total);
     }).catch(function (error) { console.log(error) });
@@ -171,7 +166,7 @@ const PrestamosEdicion = () => {
 
               <FormControl variant="standard" sx={{ mr: 2, my: 3, minWidth: 120 }}>
                 <InputLabel id="metodo_pago-label">METODO DE PAGO</InputLabel>
-                <Select labelId="metodo_pago-label" className="browser-default" defaultValue={999} id="metodo_pago" name="metodo_pago">
+                <Select labelId="metodo_pago-label" className="browser-default" value={selectedMetodoPago} onChange={(e) => setSelectedMetodoPago(e.target.value)} id="metodo_pago" name="metodo_pago">
                   <MenuItem value="999" disabled selected>-- SELECCIONE --</MenuItem>
                   {metodos_pago}
                 </Select>
