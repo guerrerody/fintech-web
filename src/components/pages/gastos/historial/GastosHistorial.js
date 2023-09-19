@@ -33,9 +33,26 @@ const GastosHistorial = () => {
   const [lista, setLista] = useState([]);
   const [botones, setBotones] = useState([]);
 
+  const [categoria_gastos, setCategoria_gastos] = useState([]);
+  const [metodos_pago, setMetodos_pago] = useState([]);
+
   useEffect(() => {
     getGastos();
+    rellenarOptions();
   }, [gastos]);
+
+  const rellenarOptions = async () => {
+    await axios.get('http://localhost:8080/api/generales/registrar-gastos', {
+      headers: {
+        'token-e': getJWT()
+      }
+    })
+      .then(function (arreglo) {
+        setCategoria_gastos(arreglo.data.nombresCatGas.map(catGas => catGas[0]));
+        setMetodos_pago(arreglo.data.nombresMetPag.map(metPag => metPag[0]));
+      })
+      .catch(function (error) { console.log("error interno: " + error) });
+  }
 
   const atras = () => {
     if (desde > 1) {
@@ -66,25 +83,25 @@ const GastosHistorial = () => {
       setTotal(respuesta.data.total);
       const array = [];
       for (let i = 1; i <= (total / 5 + 0.9); i++) {
-        array.push(<Button style={{ backgroundColor:'#FF570C', color:'#FFFFFF', borderRadius: 0 }} key={i} className="col s1" onClick={() => { paginacion(i) }}>{i}</Button>);
+        array.push(<Button style={{ backgroundColor: '#FF570C', color: '#FFFFFF', borderRadius: 0 }} key={i} className="col s1" onClick={() => { paginacion(i) }}>{i}</Button>);
       }
 
       setBotones(array);
-      setLista(gastos.map(gastos =><>
+      setLista(gastos.map(gastos => <>
         <TableRow
-        key={gastos.idgasto}
-        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+          key={gastos.idgasto}
+          sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
         >
           <TableCell component="th" scope="row">{gastos.idgasto}</TableCell>
           <TableCell>{gastos.fecha.substring(0, 10)}</TableCell>
           <TableCell>{gastos.nombre}</TableCell>
           <TableCell>{gastos.descripcion}</TableCell>
           <TableCell>{gastos.monto}</TableCell>
-          <TableCell>{gastos.categoria_gasto_id}</TableCell>
-          <TableCell>{gastos.metodo_pago_id}</TableCell>
+          <TableCell>{categoria_gastos[gastos.categoria_gasto_id]}</TableCell>
+          <TableCell>{metodos_pago[gastos.metodo_pago_id]}</TableCell>
           <TableCell><Button variant="contained" onClick={() => navigate('/gastos-edicion/' + gastos.idgasto)}>E</Button></TableCell>
           <TableCell><Button variant="contained" onClick={() => eliminarGasto(gastos.idgasto)}>X</Button></TableCell>
-      </TableRow></>
+        </TableRow></>
       ));
     }).catch(function (error) {
       if (error.response) {
@@ -139,20 +156,20 @@ const GastosHistorial = () => {
       <MenuApp />
       <div className="menubar">
         <div className="menubar" style={{ justifyContent: 'space-around' }}>
-          <img src={logo} alt="Logo" style={{ width: 150 }}/>
+          <img src={logo} alt="Logo" style={{ width: 150 }} />
         </div>
         <h1 style={{ color: '#FF570C', fontWeight: 'bold' }}>GASTOS</h1>
       </div>
 
-      <Box sx={{ display:'flex', justifyContent:'center', marginBottom: 5 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', marginBottom: 5 }}>
         <div>
           <Button className="boton" onClick={() => { navigate('/gastos-registro') }}>REGISTRO</Button>
           <Button variant="contained" className="boton focus__button">HISTORIAL</Button>
         </div>
       </Box>
 
-      <Box sx={{ display:'flex', justifyContent:'center'}}>
-        <TableContainer component={Paper} sx={{ width: '70%'}}>
+      <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+        <TableContainer component={Paper} sx={{ width: '70%' }}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead className="table_head">
               <TableRow>
@@ -172,11 +189,11 @@ const GastosHistorial = () => {
         </TableContainer>
       </Box>
 
-      <Box sx={{ m: 4, display: 'flex', justifyContent:'flex-end'}}>
-        <div style={{ margin: '40px 0px',  }}>
-          <Button style={{ backgroundColor:'#FF570C', color:'#FFFFFF', borderRadius: 0 }} className="col s1" onClick={() => { atras() }}>Atras</Button>
+      <Box sx={{ m: 4, display: 'flex', justifyContent: 'flex-end' }}>
+        <div style={{ margin: '40px 0px', }}>
+          <Button style={{ backgroundColor: '#FF570C', color: '#FFFFFF', borderRadius: 0 }} className="col s1" onClick={() => { atras() }}>Atras</Button>
           {botones}
-          <Button style={{ backgroundColor:'#FF570C', color:'#FFFFFF', borderRadius: 0 }} className="col s1" onClick={() => { siguiente() }}>Siguiente</Button>
+          <Button style={{ backgroundColor: '#FF570C', color: '#FFFFFF', borderRadius: 0 }} className="col s1" onClick={() => { siguiente() }}>Siguiente</Button>
         </div>
       </Box>
 

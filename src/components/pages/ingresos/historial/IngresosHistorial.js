@@ -33,9 +33,26 @@ const IngresosHistorial = () => {
   const [lista, setLista] = useState([]);
   const [botones, setBotones] = useState([]);
 
+  const [categoria_ingresos, setCategoria_ingresos] = useState([]);
+  const [metodos_pago, setMetodos_pago] = useState([]);
+
   useEffect(() => {
     getIngresos();
+    rellenarOptions();
   }, [ingresos]);
+
+  const rellenarOptions = async () => {
+    await axios.get('http://localhost:8080/api/generales/registrar-gastos', {
+      headers: {
+        'token-e': getJWT()
+      }
+    })
+      .then(function (arreglo) {
+        setCategoria_ingresos(arreglo.data.nombresCatIng.map(catIng => catIng[0]));
+        setMetodos_pago(arreglo.data.nombresMetPag.map(metPag => metPag[0]));
+      })
+      .catch(function (error) { console.log("error interno: " + error) });
+  }
 
   const atras = () => {
     if(desde > 1){
@@ -81,8 +98,8 @@ const IngresosHistorial = () => {
           <TableCell>{ingresos.nombre}</TableCell>
           <TableCell>{ingresos.descripcion}</TableCell>
           <TableCell>{ingresos.monto}</TableCell>
-          <TableCell>{ingresos.categoria_ingreso_id}</TableCell>
-          <TableCell>{ingresos.metodo_pago_id}</TableCell>
+          <TableCell>{categoria_ingresos[ingresos.categoria_ingreso_id]}</TableCell>
+          <TableCell>{metodos_pago[ingresos.metodo_pago_id]}</TableCell>
           <TableCell><Button variant="contained" onClick={() => navigate('/ingresos-edicion/' + ingresos.idingreso)}>E</Button></TableCell>
           <TableCell><Button variant="contained" onClick={() => eliminarIngreso(ingresos.idingreso)}>X</Button></TableCell>
         </TableRow></>

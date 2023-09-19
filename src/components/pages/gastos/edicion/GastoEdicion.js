@@ -36,6 +36,29 @@ const GastosEdicion = () => {
     obtenerGasto();
   }, []);
 
+  const eliminarGasto = async (id) => {
+    await axios.delete('http://localhost:8080/api/gasto/' + id, {
+      headers: {
+        'token-e': getJWT()
+      }
+    }).then(function (respuesta) {
+      Swal.fire({
+        icon: 'success',
+        title: 'GASTO ELIMINADO',
+        text: 'El gastos' + id + 'fue eliminado correctamente.'
+      });
+
+      navigate('/gastos-historia');
+    }).catch(function (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'ERROR AL INTENTAR ELIMINAR EL GASTO'
+      });
+
+      console.error(error);
+    });
+  }
+
   const verificarSesion = async () => {
 
     await axios.get('http://localhost:8080/api/auth/auth', {
@@ -207,7 +230,7 @@ const GastosEdicion = () => {
               <Button type="submit"  variant="contained" sx={{ mt: 3, mb: 2, borderRadius: "8px", width: '70%' }} >
                 Editar
               </Button>
-              <Button type="submit" variant="contained" sx={{ mt: 3, mb: 2, mx: 1, backgroundColor:"#606470", borderRadius: "8px", width: '70%' }}>
+              <Button onClick={() => {eliminarGasto(params.id)}} variant="contained" sx={{ mt: 3, mb: 2, mx: 1, backgroundColor:"#606470", borderRadius: "8px", width: '70%' }}>
                 Eliminar
               </Button>
               </div>

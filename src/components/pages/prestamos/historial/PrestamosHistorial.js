@@ -33,9 +33,24 @@ const PrestamosHistorial = () => {
   const [lista, setLista] = useState([]);
   const [botones, setBotones] = useState([]);
 
+  const [metodos_pago, setMetodos_pago] = useState([]);
+
   useEffect(() => {
     getPrestamos();
+    rellenarOptions();
   }, [prestamos]);
+
+  const rellenarOptions = async () => {
+    await axios.get('http://localhost:8080/api/generales/registrar-gastos', {
+      headers: {
+        'token-e': getJWT()
+      }
+    })
+      .then(function (arreglo) {
+        setMetodos_pago(arreglo.data.nombresMetPag.map(metPag => metPag[0]));
+      })
+      .catch(function (error) { console.log("error interno: " + error) });
+  }
 
   const atras = () => {
     if(desde > 1){
@@ -80,7 +95,7 @@ const PrestamosHistorial = () => {
           <TableCell>{prestamos.fecha_cumplimiento.substring(0,10)}</TableCell>
           <TableCell>{prestamos.descripcion}</TableCell>
           <TableCell>{prestamos.total}</TableCell>
-          <TableCell>{prestamos.metodo_pago_id}</TableCell>
+          <TableCell>{metodos_pago[prestamos.metodo_pago_id]}</TableCell>
           <TableCell><Button variant="contained" onClick={() => navigate('/prestamos-edicion/' + prestamos.idprestamo)}>E</Button></TableCell>
           <TableCell><Button variant="contained" onClick={() => eliminarPrestamo(prestamos.idprestamo)}>X</Button></TableCell>
         </TableRow></>

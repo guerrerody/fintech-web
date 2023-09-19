@@ -28,6 +28,29 @@ const PrestamosEdicion = () => {
     obtenerGasto();
   }, []);
 
+  const eliminarPrestamo = async (id) => {
+    await axios.delete('http://localhost:8080/api/prestamo/' + id, {
+      headers: {
+        'token-e': getJWT()
+      }
+    }).then(function (respuesta) {
+      Swal.fire({
+        icon: 'success',
+        title: 'PRESTAMO ELIMINADO',
+        text: 'El prestamos' + id + 'fue eliminado correctamente.'
+      });
+
+      navigate('/prestamos-historial');
+    }).catch(function (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'ERROR AL INTENTAR ELIMINAR EL PRESTAMO'
+      });
+
+      console.error(error);
+    });
+  }
+
   const verificarSesion = async () => {
 
     await axios.get('http://localhost:8080/api/auth/auth', {
@@ -179,7 +202,7 @@ const PrestamosEdicion = () => {
               <Button type="submit"  variant="contained" sx={{ mt: 3, mb: 2, borderRadius: "8px", width: '70%' }} >
                 Editar
               </Button>
-              <Button type="submit" variant="contained" sx={{ mt: 3, mb: 2, mx: 1, backgroundColor:"#606470", borderRadius: "8px", width: '70%' }}>
+              <Button onClick={() => {eliminarPrestamo(params.id)}} variant="contained" sx={{ mt: 3, mb: 2, mx: 1, backgroundColor:"#606470", borderRadius: "8px", width: '70%' }}>
                 Eliminar
               </Button>
               </div>

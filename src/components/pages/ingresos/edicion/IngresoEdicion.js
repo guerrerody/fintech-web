@@ -31,6 +31,29 @@ const IngresosEdicion = () => {
     obtenerIngreso();
   }, []);
 
+  const eliminarIngreso = async (id) => {
+    await axios.delete('http://localhost:8080/api/ingreso/' + id, {
+      headers: {
+        'token-e': getJWT()
+      }
+    }).then(function (respuesta) {
+      Swal.fire({
+        icon: 'success',
+        title: 'INGRESO ELIMINADO',
+        text: 'El ingreso' + id + 'fue eliminado correctamente.'
+      });
+
+      navigate('/ingresos-historial');
+    }).catch(function (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'ERROR AL INTENTAR ELIMINAR EL INGRESO'
+      });
+
+      console.error(error);
+    });
+  }
+
   const verificarSesion = async () => {
 
     await axios.get('http://localhost:8080/api/auth/auth', {
@@ -187,7 +210,7 @@ const IngresosEdicion = () => {
               <Button type="submit"  variant="contained" sx={{ mt: 3, mb: 2, borderRadius: "8px", width: '70%' }} >
                 Editar
               </Button>
-              <Button type="submit" variant="contained" sx={{ mt: 3, mb: 2, mx: 1, backgroundColor:"#606470", borderRadius: "8px", width: '70%' }}>
+              <Button onClick={() => {eliminarIngreso(params.id)}} variant="contained" sx={{ mt: 3, mb: 2, mx: 1, backgroundColor:"#606470", borderRadius: "8px", width: '70%' }}>
                 Eliminar
               </Button>
               </div>
