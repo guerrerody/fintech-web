@@ -1,12 +1,16 @@
 import { useEffect, useState } from "react";
-import { Link as RouterLink, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import axios from 'axios';
 import { getJWT } from "../../../utils/localStorage";
 import Footer from "components/shared/footer";
-import { Box, Button, Checkbox, FormControlLabel, Grid, Link, Select, TextField } from "@mui/material";
-import Copyright from "components/Copyright";
+import { Box, Button, TextField, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import Swal from "sweetalert2";
+import gastos from 'assets/images/gastos.jpeg';
+
+import MenuApp from "components/shared/menuBar";
+
+import logo from 'assets/images/logo.svg';
 
 
 const GastosEdicion = () => {
@@ -19,11 +23,41 @@ const GastosEdicion = () => {
   const [modalidad, setModalidad] = useState([]);
   const [impuesto, setImpuesto] = useState([]);
 
+  // Estados para almacenar los valores seleccionados de cada lista desplegable
+  const [selectedCategoriaGasto, setSelectedCategoriaGasto] = useState("");
+  const [selectedMetodoPago, setSelectedMetodoPago] = useState("");
+  const [selectedModalidadPago, setSelectedModalidadPago] = useState("");
+  const [selectedImpuesto, setSelectedImpuesto] = useState("");
+
+
   useEffect(() => {
     verificarSesion();
     rellenarOptions();
     obtenerGasto();
   }, []);
+
+  const eliminarGasto = async (id) => {
+    await axios.delete('http://localhost:8080/api/gasto/' + id, {
+      headers: {
+        'token-e': getJWT()
+      }
+    }).then(function (respuesta) {
+      Swal.fire({
+        icon: 'success',
+        title: 'GASTO ELIMINADO',
+        text: 'El gastos' + id + 'fue eliminado correctamente.'
+      });
+
+      navigate('/gastos-historia');
+    }).catch(function (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'ERROR AL INTENTAR ELIMINAR EL GASTO'
+      });
+
+      console.error(error);
+    });
+  }
 
   const verificarSesion = async () => {
 
@@ -65,10 +99,10 @@ const GastosEdicion = () => {
       }
     })
       .then(function (arreglo) {
-        setCategoria_gastos(arreglo.data.nombresCatGas.map(catGas => <option value={catGas[1]}>{catGas[0]}</option>));
-        setMetodos_pago(arreglo.data.nombresMetPag.map(metPag => <option value={metPag[1]}>{metPag[0]}</option>));
-        setModalidad(arreglo.data.nombresModPag.map(modPag => <option value={modPag[1]}>{modPag[0]}</option>));
-        setImpuesto(arreglo.data.nombresImp.map(imp => <option value={imp[1]}>{imp[0]}</option>));
+        setCategoria_gastos(arreglo.data.nombresCatGas.map(catGas => <MenuItem value={catGas[1]}>{catGas[0]}</MenuItem>));
+        setMetodos_pago(arreglo.data.nombresMetPag.map(metPag => <MenuItem value={metPag[1]}>{metPag[0]}</MenuItem>));
+        setModalidad(arreglo.data.nombresModPag.map(modPag => <MenuItem value={modPag[1]}>{modPag[0]}</MenuItem>));
+        setImpuesto(arreglo.data.nombresImp.map(imp => <MenuItem value={imp[1]}>{imp[0]}</MenuItem>));
       })
       .catch(function (error) { console.log("error interno: " + error) });
   }
@@ -86,23 +120,17 @@ const GastosEdicion = () => {
       const nombre = document.getElementById("nombre");
       nombre.value = exito.data.gasto.nombre;
 
-      const categoria_gasto = document.getElementById("categoria_gasto");
-      categoria_gasto.value = exito.data.gasto.categoria_gasto_id;
-
-      const metodo_pago = document.getElementById("metodo_pago");
-      metodo_pago.value = exito.data.gasto.metodo_pago_id;
-
-      const modalidad_pago = document.getElementById("modalidad_pago");
-      modalidad_pago.value = exito.data.gasto.modalidad_pago_id;
-
       const descripcion = document.getElementById("descripcion");
       descripcion.value = exito.data.gasto.descripcion;
 
-      const impuesto = document.getElementById("impuesto");
-      impuesto.value = exito.data.gasto.impuesto_id;
-
       const monto = document.getElementById("monto");
       monto.value = exito.data.gasto.monto;
+
+      setSelectedCategoriaGasto(exito.data.gasto.categoria_gasto_id);
+      setSelectedMetodoPago(exito.data.gasto.metodo_pago_id);
+      setSelectedModalidadPago(exito.data.gasto.modalidad_pago_id);
+      setSelectedImpuesto(exito.data.gasto.impuesto_id);
+
     }).catch(function (error) { console.log(error) });
   }
 
@@ -146,70 +174,78 @@ const GastosEdicion = () => {
 
   return (
     <>
+      <MenuApp />
       <div className="menubar">
         <div className="menubar" style={{ justifyContent: 'space-around' }}>
-          <h4>Menu bar    .</h4>
-          <h4>Logo</h4>
+          <img src={logo} alt="Logo" style={{ width: 150 }}/>
         </div>
         <h1 style={{ color: '#FF570C', fontWeight: 'bold' }}>GASTOS</h1>
       </div>
 
-      <div className="center">
-        <div>
-          <h2 style={{ color: '#FF570C', fontWeight: 'bold' }}>GASTO - {params.id}</h2>
+      <Box sx={{ display: 'flex', justifyContent:'center', textAlign: 'center'}}>
+        <div style={{ backgroundColor:'#FF570C', borderRadius:'15px', width: '50%', height: '10%'}}>
+          <h2 style={{ color: '#ffffff', fontWeight: 'bold', margin: 0 }}>GASTO - {params.id}</h2>
         </div>
-      </div>
+      </Box>
       {/* onSubmit={handleSubmit} */}
       <div className="container" >
-        <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 2 }} style={{ display: 'flex', justifyContent: 'space-around' }}>
-          <div>
+        <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 2, mx: 5, p: 3, backgroundColor:"#f7f7f7" }} style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <div style={{width: '55%'}}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)' }}>
-              <TextField margin="normal" required fullWidth autoFocus id="nombre" name="nombre"
-                label="Nombre" autoComplete="nombre" />
-              <div>
-                <label>CATEGORIA GASTO</label>
-                <select className="browser-default" defaultValue={0} id="categoria_gasto" name="categoria_gasto">
-                  <option value="0" disabled selected>-- SELECCIONE --</option>
+              <TextField sx={{my: 3}} margin="normal" required fullWidth autoFocus id="nombre" name="nombre"
+                label="Nombre" autoComplete="nombre" variant="standard" />
+              <FormControl variant="standard" sx={{ mr: 2, my: 3, minWidth: 120 }}>
+                <InputLabel id="categoria_gasto-label">CATEGORIA GASTO</InputLabel>
+                <Select labelId="categoria_gasto-label" className="browser-default" value={selectedCategoriaGasto} onChange={(e) => setSelectedCategoriaGasto(e.target.value)} id="categoria_gasto" name="categoria_gasto">
+                  <MenuItem value="0" disabled selected>-- SELECCIONE --</MenuItem>
                   {categoria_gastos}
-                </select>
-              </div>
-              <div>
-                <label>METODO DE PAGO</label>
-                <select className="browser-default" defaultValue={0} id="metodo_pago" name="metodo_pago">
-                  <option value="0" disabled selected>-- SELECCIONE --</option>
+                </Select>
+              </FormControl>
+              <FormControl variant="standard" sx={{ mr: 2, my: 3, minWidth: 120 }}>
+                <InputLabel id="metodo_pago-label">METODO DE PAGO</InputLabel>
+                <Select labelId="metodo_pago-label" className="browser-default" value={selectedMetodoPago} onChange={(e) => setSelectedMetodoPago(e.target.value)} id="metodo_pago" name="metodo_pago">
+                  <MenuItem value="0" disabled selected>-- SELECCIONE --</MenuItem>
                   {metodos_pago}
-                </select>
-              </div>
-              <div>
-                <label>MODALIDAD DE PAGO</label>
-                <select className="browser-default" defaultValue={0} id="modalidad_pago" name="modalidad_pago">
-                  <option value="0" disabled selected>-- SELECCIONE --</option>
+                </Select>
+              </FormControl>
+              <FormControl variant="standard" sx={{ mr: 2, my: 3, minWidth: 120 }}>
+                <InputLabel id="modalidad_pago-label">MODALIDAD DE PAGO</InputLabel>
+                <Select labelId="modalidad_pago-label" className="browser-default" value={selectedModalidadPago} onChange={(e) => setSelectedModalidadPago(e.target.value)} id="modalidad_pago" name="modalidad_pago">
+                  <MenuItem value="0" disabled selected>-- SELECCIONE --</MenuItem>
                   {modalidad}
-                </select>
-              </div>
-              <TextField margin="normal" required fullWidth autoFocus id="descripcion" name="descripcion"
-                label="Descripcion" autoComplete="descripcion" style={{ gridColumn: '1 / 3' }} />
-              <div>
-                <label>IMPUESTO</label>
-                <select className="browser-default" defaultValue={0} id="impuesto" name="impuesto">
-                  <option value="0" disabled selected>-- SELECCIONE --</option>
+                </Select>
+              </FormControl>
+              <TextField sx={{my: 3}} margin="normal" required fullWidth id="descripcion" name="descripcion"
+                label="Descripcion" autoComplete="descripcion" style={{ gridColumn: '1 / 3' }} variant="standard" />
+              <FormControl variant="standard" sx={{ mr: 2, my: 3, minWidth: 120 }}>
+                <InputLabel id="impuesto-label">IMPUESTO</InputLabel>
+                <Select labelId="impuesto-label" className="browser-default" value={selectedImpuesto} onChange={(e) => setSelectedImpuesto(e.target.value)} id="impuesto" name="impuesto">
+                  <MenuItem value="0" disabled selected>-- SELECCIONE --</MenuItem>
                   {impuesto}
-                </select>
-              </div>
-              <TextField margin="normal" required fullWidth autoFocus id="monto" name="monto"
-                label="Monto" autoComplete="monto" />
-
-              <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }} style={{ gridColumn: '2 / 3' }}>
-                EDITAR
+                </Select>
+              </FormControl>
+              <TextField type="number" sx={{my: 3}} margin="normal" fullWidth id="monto" name="monto"
+                label="Monto" autoComplete="monto" variant="standard" InputLabelProps={{ shrink: true, required: true }}/>
+              <div style={{ display:'flex', justifyContent:'flex-end', gridColumn: '2 / 3'}}>
+              <Button type="submit"  variant="contained" sx={{ mt: 3, mb: 2, borderRadius: "8px", width: '70%' }} >
+                Editar
               </Button>
+              <Button onClick={() => {eliminarGasto(params.id)}} variant="contained" sx={{ mt: 3, mb: 2, mx: 1, backgroundColor:"#606470", borderRadius: "8px", width: '70%' }}>
+                Eliminar
+              </Button>
+              </div>
             </div>
           </div>
 
-          <div>
-            <TextField margin="normal" required fullWidth autoFocus id="fecha" name="fecha"
-              label="Fecha" autoComplete="fecha" />
-            <h2>text</h2>
-            <h3>imagen</h3>
+          <div style={{ width: '35%'}}>
+            <TextField type="date" margin="normal" required fullWidth autoFocus id="fecha" name="fecha"
+              label="Fecha" autoComplete="fecha" placeholder="AAAA-MM-DD" variant="standard" InputLabelProps={{ shrink: true, required: true }}  />
+            <h3 >
+            ¡LOS GASTOS A CREDITO HARAN QUE TU DINERO VUELE LEJOS DE TUS MANOS!
+            </h3>
+            <Box>
+            <img src={gastos} alt="gastos" style={{ width: '90%', borderRadius:'15px' }}/>
+            </Box>
           </div>
         </Box>
       </div>

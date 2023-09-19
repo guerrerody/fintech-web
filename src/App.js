@@ -10,15 +10,24 @@ import './App.scss';
 import Signin from 'components/auth/Signin/Signin';
 import Signup from 'components/auth/Signup/Signup';
 import ForgotPassword from 'components/auth/ForgotPassword/ForgotPassword';
+
 import GastosHistorial from 'components/pages/gastos/historial/GastosHistorial';
 import GastosRegistro from 'components/pages/gastos/registro/GastosRegistro';
 import GastosEdicion from 'components/pages/gastos/edicion/GastoEdicion';
+
 import IngresosHistorial from 'components/pages/ingresos/historial/IngresosHistorial';
 import IngresosRegistro from 'components/pages/ingresos/registro/IngresosRegistro';
 import IngresosEdicion from 'components/pages/ingresos/edicion/IngresoEdicion';
+
 import PrestamosHistorial from 'components/pages/prestamos/historial/PrestamosHistorial';
 import PrestamosRegistro from 'components/pages/prestamos/registro/PrestamosRegistro';
 import PrestamosEdicion from 'components/pages/prestamos/edicion/PrestamosEdicion';
+
+import PresupuestoHistorial from 'components/pages/presupuestos/historial/PresupuestoHistorial';
+import PresupuestoRegistro from 'components/pages/presupuestos/registro/PresupuestoRegistro';
+import PresupuestoEdicion from 'components/pages/presupuestos/edicion/PresupuestoEdicion';
+
+import DeudasHistorial from 'components/pages/deudas/historial/DeudasHistorial';
 
 export default function App() {
   return (
@@ -40,10 +49,18 @@ export default function App() {
           <Route path="/ingresos-registro" element={<IngresosRegistro />} />
           <Route path="/ingresos-edicion/:id" element={<IngresosEdicion />} />
 
-          {/* INGRESOS */}
+          {/* PRESTAMOS */}
           <Route path="/prestamos-historial" element={<PrestamosHistorial />} />
           <Route path="/prestamos-registro" element={<PrestamosRegistro />} />
           <Route path="/prestamos-edicion/:id" element={<PrestamosEdicion />} />
+
+          {/* PRESUPUESTOS */}
+          <Route path="/presupuestos-historial" element={<PresupuestoHistorial />} />
+          <Route path="/presupuestos-registro" element={<PresupuestoRegistro />} />
+          <Route path="/presupuestos-edicion/:id" element={<PresupuestoEdicion />} />
+
+          {/* DEUDAS */}
+          <Route path="/deudas-historial" element={<DeudasHistorial />} />
 
           {/*
           <Route path="/404" element={<ErrorPage />} />

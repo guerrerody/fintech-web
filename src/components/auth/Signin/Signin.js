@@ -40,13 +40,6 @@ const Signin = () => {
     }).then(respuesta => {
       if(respuesta != null && respuesta.data.usuario.idusuario > 0){
         setLocalStorage(respuesta.data.token);
-
-        Swal.fire(
-          'Good job!',
-          'Inicio de sesion correcto!',
-          'success'
-        );
-
         navigate("/gastos-historial");
       }
     }).catch(function (error) {

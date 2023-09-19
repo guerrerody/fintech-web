@@ -1,12 +1,17 @@
 import { useEffect, useState } from "react";
-import { Link as RouterLink, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import axios from 'axios';
 import { getJWT } from "../../../utils/localStorage";
 import Footer from "components/shared/footer";
-import { Box, Button, Checkbox, FormControlLabel, Grid, Link, Select, TextField } from "@mui/material";
-import Copyright from "components/Copyright";
+import { Box, Button, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 import Swal from "sweetalert2";
+
+import ingresos from 'assets/images/ingresos.jpeg';
+
+import MenuApp from "components/shared/menuBar";
+
+import logo from 'assets/images/logo.svg';
 
 
 const IngresosEdicion = () => {
@@ -16,14 +21,38 @@ const IngresosEdicion = () => {
 
   const [categoria_ingresos, setCategoria_ingresos] = useState([]);
   const [metodos_pago, setMetodos_pago] = useState([]);
-  const [modalidad, setModalidad] = useState([]);
-  const [impuesto, setImpuesto] = useState([]);
+
+  const [selectedCategoriaIngreso, setSelectedCategoriaIngreso] = useState("");
+  const [selectedMetodoPago, setSelectedMetodoPago] = useState("");
 
   useEffect(() => {
     verificarSesion();
     rellenarOptions();
     obtenerIngreso();
   }, []);
+
+  const eliminarIngreso = async (id) => {
+    await axios.delete('http://localhost:8080/api/ingreso/' + id, {
+      headers: {
+        'token-e': getJWT()
+      }
+    }).then(function (respuesta) {
+      Swal.fire({
+        icon: 'success',
+        title: 'INGRESO ELIMINADO',
+        text: 'El ingreso' + id + 'fue eliminado correctamente.'
+      });
+
+      navigate('/ingresos-historial');
+    }).catch(function (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'ERROR AL INTENTAR ELIMINAR EL INGRESO'
+      });
+
+      console.error(error);
+    });
+  }
 
   const verificarSesion = async () => {
 
@@ -65,10 +94,8 @@ const IngresosEdicion = () => {
       }
     })
       .then(function (arreglo) {
-        setCategoria_ingresos(arreglo.data.nombresCatIng.map(catIng => <option value={catIng[1]}>{catIng[0]}</option>));
-        setMetodos_pago(arreglo.data.nombresMetPag.map(metPag => <option value={metPag[1]}>{metPag[0]}</option>));
-        setModalidad(arreglo.data.nombresModPag.map(modPag => <option value={modPag[1]}>{modPag[0]}</option>));
-        setImpuesto(arreglo.data.nombresImp.map(imp => <option value={imp[1]}>{imp[0]}</option>));
+        setCategoria_ingresos(arreglo.data.nombresCatIng.map(catIng => <MenuItem value={catIng[1]}>{catIng[0]}</MenuItem>));
+        setMetodos_pago(arreglo.data.nombresMetPag.map(metPag => <MenuItem value={metPag[1]}>{metPag[0]}</MenuItem>));
       })
       .catch(function (error) { console.log("error interno: " + error) });
   }
@@ -86,23 +113,15 @@ const IngresosEdicion = () => {
       const nombre = document.getElementById("nombre");
       nombre.value = exito.data.ingreso.nombre;
 
-      const categoria_ingresos = document.getElementById("categoria_ingreso");
-      categoria_ingresos.value = exito.data.ingreso.categoria_ingreso_id;
-
-      const metodo_pago = document.getElementById("metodo_pago");
-      metodo_pago.value = exito.data.ingreso.metodo_pago_id;
-
-      const modalidad_pago = document.getElementById("modalidad_pago");
-      modalidad_pago.value = exito.data.ingreso.modalidad_pago_id;
-
       const descripcion = document.getElementById("descripcion");
       descripcion.value = exito.data.ingreso.descripcion;
 
-      const impuesto = document.getElementById("impuesto");
-      impuesto.value = exito.data.ingreso.impuesto_id;
-
       const monto = document.getElementById("monto");
       monto.value = exito.data.ingreso.monto;
+
+      setSelectedCategoriaIngreso(exito.data.ingreso.categoria_ingreso_id);
+      setSelectedMetodoPago(exito.data.ingreso.metodo_pago_id);
+
     }).catch(function (error) { console.log(error) });
   }
 
@@ -117,9 +136,7 @@ const IngresosEdicion = () => {
       descripcion: datos.get('descripcion'),
       monto: datos.get('monto'),
       categoria_ingreso_id: datos.get('categoria_ingreso'),
-      modalidad_pago_id: datos.get('modalidad_pago'),
       metodo_pago_id: datos.get('metodo_pago'),
-      impuesto_id: datos.get('impuesto')
     }, {
       headers: {
         'token-e': getJWT()
@@ -146,70 +163,69 @@ const IngresosEdicion = () => {
 
   return (
     <>
+      <MenuApp />
       <div className="menubar">
         <div className="menubar" style={{ justifyContent: 'space-around' }}>
-          <h4>Menu bar    .</h4>
-          <h4>Logo</h4>
+          <img src={logo} alt="Logo" style={{ width: 150 }}/>
         </div>
         <h1 style={{ color: '#FF570C', fontWeight: 'bold' }}>INGRESOS</h1>
       </div>
 
-      <div className="center">
-        <div>
-          <h2 style={{ color: '#FF570C', fontWeight: 'bold' }}>INGRESO - {params.id}</h2>
+      <Box sx={{ display: 'flex', justifyContent:'center', textAlign: 'center'}}>
+        <div style={{ backgroundColor:'#FF570C', borderRadius:'15px', width: '50%', height: '10%'}}>
+          <h2 style={{ color: '#ffffff', fontWeight: 'bold', margin: 0 }}>INGRESO - {params.id}</h2>
         </div>
-      </div>
+      </Box>
       {/* onSubmit={handleSubmit} */}
       <div className="container" >
-        <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 2 }} style={{ display: 'flex', justifyContent: 'space-around' }}>
-          <div>
+        <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 2, mx: 5, p: 3, backgroundColor:"#f7f7f7" }} style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <div style={{width: '55%'}}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)' }}>
-              <TextField margin="normal" required fullWidth autoFocus id="nombre" name="nombre"
-                label="Nombre" autoComplete="nombre" />
-              <div>
-                <label>CATEGORIA INGRESOS</label>
-                <select className="browser-default" defaultValue={0} id="categoria_ingreso" name="categoria_ingreso">
-                  <option value="0" disabled selected>-- SELECCIONE --</option>
-                  {categoria_ingresos}
-                </select>
-              </div>
-              <div>
-                <label>METODO DE PAGO</label>
-                <select className="browser-default" defaultValue={0} id="metodo_pago" name="metodo_pago">
-                  <option value="0" disabled selected>-- SELECCIONE --</option>
-                  {metodos_pago}
-                </select>
-              </div>
-              <div>
-                <label>MODALIDAD DE PAGO</label>
-                <select className="browser-default" defaultValue={0} id="modalidad_pago" name="modalidad_pago">
-                  <option value="0" disabled selected>-- SELECCIONE --</option>
-                  {modalidad}
-                </select>
-              </div>
-              <TextField margin="normal" required fullWidth autoFocus id="descripcion" name="descripcion"
-                label="Descripcion" autoComplete="descripcion" style={{ gridColumn: '1 / 3' }} />
-              <div>
-                <label>IMPUESTO</label>
-                <select className="browser-default" defaultValue={0} id="impuesto" name="impuesto">
-                  <option value="0" disabled selected>-- SELECCIONE --</option>
-                  {impuesto}
-                </select>
-              </div>
-              <TextField margin="normal" required fullWidth autoFocus id="monto" name="monto"
-                label="Monto" autoComplete="monto" />
+              <TextField sx={{my: 3}} margin="normal" required fullWidth autoFocus id="nombre" name="nombre"
+                label="Nombre" autoComplete="nombre" style={{ gridColumn: '1 / 3' }} variant="standard" />
 
-              <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }} style={{ gridColumn: '2 / 3' }}>
-                EDITAR
+              <FormControl variant="standard" sx={{ mr: 2, my: 3, minWidth: 120 }}>
+                <InputLabel id="categoria_ingreso-label">CATEGORIA INGRESOS</InputLabel>
+                <Select labelId="categoria_ingreso-label" className="browser-default" value={selectedCategoriaIngreso} onChange={(e) => setSelectedCategoriaIngreso(e.target.value)} id="categoria_ingreso" name="categoria_ingreso">
+                  <MenuItem value="0" disabled selected>-- SELECCIONE --</MenuItem>
+                  {categoria_ingresos}
+                </Select>
+              </FormControl>
+
+              <FormControl variant="standard" sx={{ mr: 2, my: 3, minWidth: 120 }}>
+                <InputLabel id="metodo_pago-label">METODO DE PAGO</InputLabel>
+                <Select labelId="metodo_pago-label" className="browser-default" value={selectedMetodoPago} onChange={(e) => setSelectedMetodoPago(e.target.value)} id="metodo_pago" name="metodo_pago">
+                  <MenuItem value="0" disabled selected>-- SELECCIONE --</MenuItem>
+                  {metodos_pago}
+                </Select>
+              </FormControl>
+
+              <TextField sx={{my: 3}} margin="normal" required fullWidth id="descripcion" name="descripcion"
+                label="Descripcion" autoComplete="descripcion" style={{ gridColumn: '1 / 3' }} variant="standard" />
+
+              <TextField type="number" sx={{my: 3}} margin="normal" required fullWidth id="monto" name="monto"
+                label="Monto" autoComplete="monto" style={{ gridColumn: '1 / 3' }} variant="standard" InputLabelProps={{ shrink: true, required: true }}/>
+
+              <div style={{ display:'flex', justifyContent:'flex-end', gridColumn: '2 / 3'}}>
+              <Button type="submit"  variant="contained" sx={{ mt: 3, mb: 2, borderRadius: "8px", width: '70%' }} >
+                Editar
               </Button>
+              <Button onClick={() => {eliminarIngreso(params.id)}} variant="contained" sx={{ mt: 3, mb: 2, mx: 1, backgroundColor:"#606470", borderRadius: "8px", width: '70%' }}>
+                Eliminar
+              </Button>
+              </div>
             </div>
           </div>
 
-          <div>
-            <TextField margin="normal" required fullWidth autoFocus id="fecha" name="fecha"
-              label="Fecha" autoComplete="fecha" />
-            <h2>text</h2>
-            <h3>imagen</h3>
+          <div style={{ width: '35%'}}>
+            <TextField type="date" margin="normal" fullWidth id="fecha" name="fecha"
+              label="Fecha" autoComplete="fecha" placeholder="AAAA-MM-DD" variant="standard" InputLabelProps={{ shrink: true, required: true }}/>
+            <h3 >
+            !RECUERDA AHORRAR UNA PARTE DE TUS INGRESOS Y VERÁS QUE LOGRARÁS MUY PRONTO TUS METAS!
+            </h3>
+            <Box>
+            <img src={ingresos} alt="ingresos" style={{ width: '90%', borderRadius:'15px' }}/>
+            </Box>
           </div>
         </Box>
       </div>

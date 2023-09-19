@@ -1,4 +1,4 @@
-import "./PrestamosHistorial.scss";
+import "./PresupuestoHistorial.scss";
 
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -22,35 +22,20 @@ import MenuApp from "components/shared/menuBar";
 import logo from 'assets/images/logo.svg';
 
 
-const PrestamosHistorial = () => {
+const PresupuestoHistorial = () => {
   const navigate = useNavigate();
 
   const [desde, setDesde] = useState(1);
   const [total, setTotal] = useState(0);
 
-  const [prestamos, setPrestamos] = useState([]);
+  const [presupuestos, setPresupuestos] = useState([]);
 
   const [lista, setLista] = useState([]);
   const [botones, setBotones] = useState([]);
 
-  const [metodos_pago, setMetodos_pago] = useState([]);
-
   useEffect(() => {
-    getPrestamos();
-    rellenarOptions();
-  }, [prestamos]);
-
-  const rellenarOptions = async () => {
-    await axios.get('http://localhost:8080/api/generales/registrar-gastos', {
-      headers: {
-        'token-e': getJWT()
-      }
-    })
-      .then(function (arreglo) {
-        setMetodos_pago(arreglo.data.nombresMetPag.map(metPag => metPag[0]));
-      })
-      .catch(function (error) { console.log("error interno: " + error) });
-  }
+    getPresupuestos();
+  }, [presupuestos]);
 
   const atras = () => {
     if(desde > 1){
@@ -68,8 +53,8 @@ const PrestamosHistorial = () => {
     setDesde((numero - 1) * 5 + 1);
   }
 
-  const getPrestamos = async () => {
-    await axios.get('http://localhost:8080/api/prestamo', {
+  const getPresupuestos = async () => {
+    await axios.get('http://localhost:8080/api/presupuesto', {
       params: {
         desde: desde
       },
@@ -77,7 +62,7 @@ const PrestamosHistorial = () => {
         'token-e': getJWT()
       }
     }).then(respuesta => {
-      setPrestamos(respuesta.data.filas);
+      setPresupuestos(respuesta.data.filas);
       setTotal(respuesta.data.total);
       const array = [];
         for(let i = 1; i <= (total / 5 + 0.9); i++){
@@ -85,19 +70,16 @@ const PrestamosHistorial = () => {
         }
 
         setBotones(array);
-      setLista(prestamos.map(prestamos =><>
-        <TableRow
-        key={prestamos.idprestamo}
-        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-        >
-          <TableCell component="th" scope="row">{prestamos.idprestamo}</TableCell>
-          <TableCell>{prestamos.fecha.substring(0,10)}</TableCell>
-          <TableCell>{prestamos.fecha_cumplimiento.substring(0,10)}</TableCell>
-          <TableCell>{prestamos.descripcion}</TableCell>
-          <TableCell>{prestamos.total}</TableCell>
-          <TableCell>{metodos_pago[prestamos.metodo_pago_id]}</TableCell>
-          <TableCell><Button variant="contained" onClick={() => navigate('/prestamos-edicion/' + prestamos.idprestamo)}>E</Button></TableCell>
-          <TableCell><Button variant="contained" onClick={() => eliminarPrestamo(prestamos.idprestamo)}>X</Button></TableCell>
+      setLista(presupuestos.map(presupuestos =><>
+        <TableRow key={presupuestos.idpresupuesto}>
+          <TableCell component="th" scope="row">{presupuestos.idpresupuesto}</TableCell>
+          <TableCell>{presupuestos.fecha.substring(0,10)}</TableCell>
+          <TableCell>{presupuestos.fecha_culminacion.substring(0,10)}</TableCell>
+          <TableCell>{presupuestos.nombre}</TableCell>
+          <TableCell>{presupuestos.descripcion}</TableCell>
+          <TableCell>{presupuestos.monto}</TableCell>
+          <TableCell><Button variant="contained" onClick={() => navigate('/presupuestos-edicion/' + presupuestos.idpresupuesto)}>E</Button></TableCell>
+          <TableCell><Button variant="contained" onClick={() => eliminarPresupuestos(presupuestos.idpresupuesto)}>X</Button></TableCell>
         </TableRow></>
       ));
     }).catch(function (error) {
@@ -127,21 +109,21 @@ const PrestamosHistorial = () => {
     });
   }
 
-  const eliminarPrestamo = async (id) => {
-    await axios.delete('http://localhost:8080/api/prestamo/' + id, {
+  const eliminarPresupuestos = async (id) => {
+    await axios.delete('http://localhost:8080/api/presupuesto/' + id, {
       headers: {
         'token-e': getJWT()
       }
     }).then(function (respuesta) {
       Swal.fire({
         icon: 'success',
-        title: 'PRESTAMO ELIMINADO',
-        text: 'El prestamos' + id + 'fue eliminado correctamente.'
+        title: 'PRESUPUESTO ELIMINADO',
+        text: 'El presupuestos' + id + 'fue eliminado correctamente.'
       });
     }).catch(function (error) {
       Swal.fire({
         icon: 'error',
-        title: 'ERROR AL INTENTAR ELIMINAR EL PRESTAMO'
+        title: 'ERROR AL INTENTAR ELIMINAR EL PRESUPUESTO'
       });
 
       console.error(error);
@@ -155,16 +137,15 @@ const PrestamosHistorial = () => {
         <div className="menubar" style={{ justifyContent: 'space-around'}}>
           <img src={logo} alt="Logo" style={{ width: 150 }}/>
         </div>
-        <h1 style={{ color: '#FF570C', fontWeight: 'bold' }}>PRESTAMOS</h1>
+        <h1 style={{ color: '#FF570C', fontWeight: 'bold' }}>PRESUPUESTOS</h1>
       </div>
 
       <Box sx={{ display:'flex', justifyContent:'center', marginBottom: 5 }}>
         <div>
-          <Button className="boton" onClick={() => { navigate('/prestamos-registro') }}>REGISTRO</Button>
+          <Button className="boton" onClick={() => { navigate('/presupuestos-registro') }}>REGISTRO</Button>
           <Button variant="contained" className="boton focus__button">HISTORIAL</Button>
         </div>
       </Box>
-
 
       <Box sx={{ display:'flex', justifyContent:'center'}}>
         <TableContainer component={Paper} sx={{ width: '70%'}}>
@@ -173,10 +154,10 @@ const PrestamosHistorial = () => {
               <TableRow>
                 <TableCell>Nro</TableCell>
                 <TableCell>Fecha</TableCell>
-                <TableCell>Fecha Cumplimiento</TableCell>
+                <TableCell>Fecha Culminacion</TableCell>
+                <TableCell>Nombre</TableCell>
                 <TableCell>Descripcion</TableCell>
-                <TableCell>Total</TableCell>
-                <TableCell>Metodo de Pago</TableCell>
+                <TableCell>Monto</TableCell>
                 <TableCell>EDITAR</TableCell>
                 <TableCell>ELIMINAR</TableCell>
               </TableRow>
@@ -199,4 +180,4 @@ const PrestamosHistorial = () => {
   )
 }
 
-export default PrestamosHistorial;
+export default PresupuestoHistorial;
